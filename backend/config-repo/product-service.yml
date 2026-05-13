@@ -1,0 +1,7 @@
+﻿spring:
+  application:
+    name: product-service
+server:
+  port: 8081
+
+# (Actuator + datasource centralized settings already present)

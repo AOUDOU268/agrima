@@ -1,0 +1,45 @@
+﻿server:
+  port: 8086
+spring:
+  application:
+    name: delivery-service
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/delivery_db}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:268368As#}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  config:
+    import: optional:configserver:http://localhost:8888
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  cloud:
+    stream:
+      bindings:
+        deliveryStarted-out-0:
+          destination: delivery-started
+        orderPlaced-in-0:
+          destination: order-placed
+      rabbit:
+        bindings:
+          deliveryStarted-out-0:
+            producer:
+              exchangeType: topic
+          orderPlaced-in-0:
+            consumer:
+              exchangeType: topic
+
+eureka:
+  client:
+    service-url:
+      default-zone: http://localhost:8761/eureka/

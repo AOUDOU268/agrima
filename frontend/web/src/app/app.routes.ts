@@ -1,0 +1,34 @@
+import { Routes } from '@angular/router';
+import { AccueilComponent } from './pages/accueil/accueil.component';
+import { CatalogueComponent } from './pages/catalogue/catalogue.component';
+import { DetailProduitComponent } from './pages/detail-produit/detail-produit.component';
+import { PanierComponent } from './pages/panier/panier.component';
+import { CommandeComponent } from './pages/commande/commande.component';
+import { ConnexionComponent } from './pages/connexion/connexion.component';
+import { ProfilComponent } from './pages/profil/profil.component';
+import { SuiviCommandeComponent } from './pages/suivi-commande/suivi-commande.component';
+import { AdminComponent } from './pages/admin/admin.component';
+import { ProducteurComponent } from './pages/producteur/producteur.component';
+import { LivreurComponent } from './pages/livreur/livreur.component';
+import { AppDetailsComponent } from './pages/app-details/app-details.component';
+import { VendezAvecNousComponent } from './pages/vendez-avec-nous/vendez-avec-nous.component';
+import { FavorisComponent } from './pages/favoris/favoris.component';
+
+export const routes: Routes = [
+  { path: '', component: AccueilComponent },
+  { path: 'catalogue', component: CatalogueComponent },
+  { path: 'produit/:id', component: DetailProduitComponent },
+  { path: 'panier', component: PanierComponent },
+  { path: 'commande', component: CommandeComponent },
+  { path: 'connexion', component: ConnexionComponent },
+  { path: 'inscription', component: ConnexionComponent },
+  { path: 'profil', component: ProfilComponent },
+  { path: 'admin', component: AdminComponent },
+  { path: 'producteur', component: ProducteurComponent },
+  { path: 'livreur', component: LivreurComponent },
+  { path: 'suivi-commande', component: SuiviCommandeComponent },
+  { path: 'app', component: AppDetailsComponent },
+  { path: 'vendez-avec-nous', component: VendezAvecNousComponent },
+  { path: 'favoris', component: FavorisComponent },
+  { path: '**', redirectTo: '' }
+];

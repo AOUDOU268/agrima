@@ -1,0 +1,6 @@
+﻿/.mvn
+**/target
+*.iml
+*.log
+*.class
+/.idea

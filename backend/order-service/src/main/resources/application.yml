@@ -1,0 +1,53 @@
+﻿server:
+  port: 8084
+spring:
+  application:
+    name: order-service
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/order_db}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:268368As#}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  config:
+    import: optional:configserver:http://localhost:8888
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  cloud:
+    stream:
+      bindings:
+        orderPlaced-out-0:
+          destination: order-placed
+        paymentConfirmed-in-0:
+          destination: payment-confirmed
+      rabbit:
+        bindings:
+          orderPlaced-out-0:
+            producer:
+              exchangeType: topic
+          paymentConfirmed-in-0:
+            consumer:
+              exchangeType: topic
+
+payment:
+  service:
+    url: http://localhost:8085
+
+delivery:
+  service:
+    url: http://localhost:8086
+
+eureka:
+  client:
+    service-url:
+      default-zone: http://localhost:8761/eureka/

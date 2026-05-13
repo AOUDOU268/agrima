@@ -1,0 +1,25 @@
+﻿spring:
+  application:
+    name: delivery-service
+server:
+  port: 8086
+
+# Centralized datasource + actuator settings (can be overridden by env or service-specific yaml)
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:}
+    username: ${SPRING_DATASOURCE_USERNAME:}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: ${SPRING_DATASOURCE_MAX_POOL:10}
+      minimum-idle: ${SPRING_DATASOURCE_MIN_IDLE:2}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when_authorized

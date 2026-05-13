@@ -1,0 +1,457 @@
+{
+  "info": {
+    "_postman_id": "agrima-user-service",
+    "name": "AGRIMA - Service Utilisateur",
+    "description": "Collection complète de tests API pour le service utilisateur",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "1"
+  },
+  "item": [
+    {
+      "name": "Utilisateurs - GET ALL",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Response is array\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an('array');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/utilisateurs",
+          "host": ["{{base_url}}"],
+          "path": ["api", "utilisateurs"]
+        },
+        "description": "Récupère la liste de tous les utilisateurs"
+      },
+      "response": []
+    },
+    {
+      "name": "Utilisateurs - GET BY ID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Response has id, email, nom, prenom\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('id');",
+              "    pm.expect(jsonData).to.have.property('email');",
+              "    pm.expect(jsonData).to.have.property('nom');",
+              "    pm.expect(jsonData).to.have.property('prenom');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/utilisateurs/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "utilisateurs", "1"]
+        },
+        "description": "Récupère un utilisateur par son ID"
+      },
+      "response": []
+    },
+    {
+      "name": "Utilisateurs - POST (CREATE)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201 Created\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "pm.test(\"Response has id\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('id');",
+              "    pm.environment.set('user_id', jsonData.id);",
+              "});",
+              "pm.test(\"Email matches request\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.email).to.equal(pm.environment.get('test_email'));",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"test.{{$timestamp}}@example.com\",\n  \"nom\": \"TestNom\",\n  \"prenom\": \"TestPrenom\",\n  \"telephone\": \"+33612345678\",\n  \"role\": \"USER\",\n  \"statut\": \"ACTIF\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/utilisateurs",
+          "host": ["{{base_url}}"],
+          "path": ["api", "utilisateurs"]
+        },
+        "description": "Crée un nouvel utilisateur"
+      },
+      "response": []
+    },
+    {
+      "name": "Utilisateurs - POST (DUPLICATE EMAIL)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 409 Conflict\", function () {",
+              "    pm.response.to.have.status(409);",
+              "});",
+              "pm.test(\"Error message mentions email\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.message).to.include('Email');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"duplicate@example.com\",\n  \"nom\": \"Duplicate\",\n  \"prenom\": \"User\",\n  \"telephone\": \"+33612345678\",\n  \"role\": \"USER\",\n  \"statut\": \"ACTIF\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/utilisateurs",
+          "host": ["{{base_url}}"],
+          "path": ["api", "utilisateurs"]
+        },
+        "description": "Test d'erreur: email déjà existant (409 Conflict)"
+      },
+      "response": []
+    },
+    {
+      "name": "Utilisateurs - POST (INVALID EMAIL)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400 Bad Request\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "pm.test(\"Error mentions validation\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.message).to.include('Validation');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"invalid-email\",\n  \"nom\": \"Test\",\n  \"prenom\": \"User\",\n  \"role\": \"USER\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/utilisateurs",
+          "host": ["{{base_url}}"],
+          "path": ["api", "utilisateurs"]
+        },
+        "description": "Test d'erreur: email invalide (400 Bad Request)"
+      },
+      "response": []
+    },
+    {
+      "name": "Utilisateurs - POST (MISSING FIELDS)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400 Bad Request\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "pm.test(\"Error mentions missing field\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.message).to.include('Validation');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"test@example.com\",\n  \"nom\": \"Test\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/utilisateurs",
+          "host": ["{{base_url}}"],
+          "path": ["api", "utilisateurs"]
+        },
+        "description": "Test d'erreur: champs obligatoires manquants"
+      },
+      "response": []
+    },
+    {
+      "name": "Utilisateurs - PUT (UPDATE)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Telephone was updated\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.telephone).to.equal('+33699999999');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"telephone\": \"+33699999999\",\n  \"statut\": \"INACTIF\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/utilisateurs/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "utilisateurs", "1"]
+        },
+        "description": "Met à jour partiellement un utilisateur"
+      },
+      "response": []
+    },
+    {
+      "name": "Utilisateurs - PUT (FULL UPDATE)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"All fields updated\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.nom).to.equal('NouveauNom');",
+              "    pm.expect(jsonData.prenom).to.equal('NouveauPrenom');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"updated@example.com\",\n  \"nom\": \"NouveauNom\",\n  \"prenom\": \"NouveauPrenom\",\n  \"telephone\": \"+33712345678\",\n  \"role\": \"ADMIN\",\n  \"statut\": \"ACTIF\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/utilisateurs/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "utilisateurs", "1"]
+        },
+        "description": "Met à jour complètement un utilisateur"
+      },
+      "response": []
+    },
+    {
+      "name": "Utilisateurs - PUT (NOT FOUND)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404 Not Found\", function () {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"telephone\": \"+33699999999\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/utilisateurs/99999",
+          "host": ["{{base_url}}"],
+          "path": ["api", "utilisateurs", "99999"]
+        },
+        "description": "Test d'erreur: utilisateur non trouvé"
+      },
+      "response": []
+    },
+    {
+      "name": "Utilisateurs - DELETE",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 204 No Content\", function () {",
+              "    pm.response.to.have.status(204);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/utilisateurs/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "utilisateurs", "1"]
+        },
+        "description": "Supprime un utilisateur"
+      },
+      "response": []
+    },
+    {
+      "name": "Utilisateurs - DELETE (NOT FOUND)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404 Not Found\", function () {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/utilisateurs/99999",
+          "host": ["{{base_url}}"],
+          "path": ["api", "utilisateurs", "99999"]
+        },
+        "description": "Test d'erreur: utilisateur à supprimer non trouvé"
+      },
+      "response": []
+    },
+    {
+      "name": "Santé - Health Check",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/actuator/health",
+          "host": ["{{base_url}}"],
+          "path": ["actuator", "health"]
+        },
+        "description": "Vérifie la santé du service (Spring Boot Actuator)"
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8082",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "test_email",
+      "value": "test@example.com",
+      "type": "string"
+    }
+  ]
+}
