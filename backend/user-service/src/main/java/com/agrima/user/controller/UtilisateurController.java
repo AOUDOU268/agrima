@@ -47,7 +47,7 @@ public class UtilisateurController {
 
     // READ ONE
     @GetMapping("/{id}")
-    public ResponseEntity<UtilisateurDTO> obtenirParId(@PathVariable Long id) {
+    public ResponseEntity<UtilisateurDTO> obtenirParId(@PathVariable("id") Long id) {
         return utilisateurRepository.findById(id)
                 .map(u -> ResponseEntity.ok(mapToDTO(u)))
                 .orElse(ResponseEntity.notFound().build());
@@ -55,7 +55,7 @@ public class UtilisateurController {
 
     // UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<UtilisateurDTO> mettreAJour(@PathVariable Long id, @Valid @RequestBody UpdateUtilisateurRequest request) {
+    public ResponseEntity<UtilisateurDTO> mettreAJour(@PathVariable("id") Long id, @Valid @RequestBody UpdateUtilisateurRequest request) {
         return utilisateurRepository.findById(id)
                 .map(existing -> {
                     if (request.getEmail() != null) existing.setEmail(request.getEmail());
@@ -72,7 +72,7 @@ public class UtilisateurController {
 
     // DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> supprimer(@PathVariable Long id) {
+    public ResponseEntity<Void> supprimer(@PathVariable("id") Long id) {
         if (utilisateurRepository.existsById(id)) {
             utilisateurRepository.deleteById(id);
             return ResponseEntity.noContent().build();
