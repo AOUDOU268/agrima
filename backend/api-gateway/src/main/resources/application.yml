@@ -1,81 +1,40 @@
 server:
-  port: 8089
-
-logging:
-  level:
-    org.springframework.cloud.gateway: TRACE
-    org.springframework.cloud.loadbalancer: DEBUG
-    com.netflix.eureka: INFO
-    com.netflix.discovery: INFO
+  port: 8080
 
 spring:
   application:
     name: api-gateway
-  config:
-    import: optional:configserver:http://localhost:8888/
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: false
+      httpclient:
+        connect-timeout: 2000
+        response-timeout: 10s
       routes:
         - id: auth-service
-          uri: http://localhost:8083
+          uri: http://127.0.0.1:8083
           predicates:
             - Path=/api/auth/**
-          filters:
-            - StripPrefix=0
-
-        - id: delivery-service
-          uri: lb://DELIVERY-SERVICE
+        - id: user-service
+          uri: http://127.0.0.1:8082
           predicates:
-            - Path=/api/deliveries/**
-          filters:
-            - StripPrefix=0
-            - PreserveHostHeader
-
-        - id: notification-service
-          uri: lb://NOTIFICATION-SERVICE
-          predicates:
-            - Path=/api/notifications/**
-          filters:
-            - StripPrefix=0
-            - PreserveHostHeader
-
+            - Path=/api/users/**, /api/utilisateurs/**
         - id: product-service
-          uri: lb://PRODUCT-SERVICE
+          uri: http://127.0.0.1:8081
           predicates:
             - Path=/api/products/**
-          filters:
-            - StripPrefix=0
-
-        - id: user-service
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/api/users/**
-          filters:
-            - StripPrefix=0
-
         - id: order-service
-          uri: lb://ORDER-SERVICE
+          uri: http://127.0.0.1:8084
           predicates:
             - Path=/api/orders/**
-          filters:
-            - StripPrefix=0
-
         - id: payment-service
-          uri: lb://PAYMENT-SERVICE
+          uri: http://127.0.0.1:8085
           predicates:
             - Path=/api/payments/**
-          filters:
-            - StripPrefix=0
+        - id: delivery-service
+          uri: http://127.0.0.1:8086
+          predicates:
+            - Path=/api/deliveries/**
 
 eureka:
-  instance:
-    hostname: localhost
-    prefer-ip-address: false
   client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-    fetch-registry: true
-    register-with-eureka: true
+    enabled: false
