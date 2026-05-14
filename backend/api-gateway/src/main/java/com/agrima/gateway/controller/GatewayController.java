@@ -6,12 +6,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import reactor.core.publisher.Mono;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpHeaders;
 
 @RestController
 public class GatewayController {
 
-    private final WebClient webClient = WebClient.create();
+    private final WebClient webClient = WebClient.builder()
+        .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(2 * 1024 * 1024))
+        .build();
 
     @RequestMapping(value = {"/api/utilisateurs", "/api/utilisateurs/**", "/api/users/**"}, method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
     public Mono<ResponseEntity<byte[]>> proxyUser(ServerHttpRequest request, @RequestBody(required = false) byte[] body) {
@@ -79,6 +80,6 @@ public class GatewayController {
 
     @GetMapping("/gateway-health")
     public Mono<String> health() {
-        return Mono.just("Full Webflux Gateway is alive");
+        return Mono.just("Robust Webflux Gateway is alive");
     }
 }

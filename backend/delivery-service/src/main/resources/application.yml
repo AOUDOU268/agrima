@@ -12,10 +12,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    database-platform: org.hibernate.dialect.H2Dialect
   cloud:
     stream:
-      default-binder: test
+      enabled: false
 eureka:
   client:
     enabled: false
