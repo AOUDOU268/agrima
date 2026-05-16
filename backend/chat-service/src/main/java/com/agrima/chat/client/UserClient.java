@@ -4,6 +4,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Map;
+
 @Component
 public class UserClient {
 
@@ -24,6 +26,18 @@ public class UserClient {
             return true;
         } catch (RestClientException e) {
             return false;
+        }
+    }
+
+    /**
+     * Get user details by ID from user-service
+     */
+    public Map<String, Object> getUserDetails(Long userId) {
+        try {
+            String url = USER_SERVICE_URL + "/api/users/" + userId;
+            return restTemplate.getForObject(url, Map.class);
+        } catch (RestClientException e) {
+            return null;
         }
     }
 }

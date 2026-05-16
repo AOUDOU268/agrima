@@ -34,11 +34,11 @@ public class ChatService {
     @Transactional
     public ConversationResponseDto createConversation(ConversationRequestDto request) {
         // Validate that both users exist in user-service
-        if (!userClient.userExists(request.getConsumerId())) {
-            throw new IllegalArgumentException("Consumer with ID " + request.getConsumerId() + " does not exist");
+        if (!userClient.userExists(request.getParticipant1Id())) {
+            throw new IllegalArgumentException("User with ID " + request.getParticipant1Id() + " does not exist");
         }
-        if (!userClient.userExists(request.getProducerId())) {
-            throw new IllegalArgumentException("Producer with ID " + request.getProducerId() + " does not exist");
+        if (!userClient.userExists(request.getParticipant2Id())) {
+            throw new IllegalArgumentException("User with ID " + request.getParticipant2Id() + " does not exist");
         }
         
         Conversation conversation = ChatMapper.toConversation(request);
@@ -46,14 +46,8 @@ public class ChatService {
         return ChatMapper.toConversationResponse(saved);
     }
 
-    public List<ConversationResponseDto> getConversationsByConsumer(Long consumerId) {
-        return conversationRepository.findByConsumerId(consumerId).stream()
-                .map(ChatMapper::toConversationResponse)
-                .collect(Collectors.toList());
-    }
-
-    public List<ConversationResponseDto> getConversationsByProducer(Long producerId) {
-        return conversationRepository.findByProducerId(producerId).stream()
+    public List<ConversationResponseDto> getConversationsByUser(Long userId) {
+        return conversationRepository.findAllByUserId(userId).stream()
                 .map(ChatMapper::toConversationResponse)
                 .collect(Collectors.toList());
     }
