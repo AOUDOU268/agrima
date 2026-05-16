@@ -1,77 +1,87 @@
-# Chat Service Gateway Tests
+# Guide de Test Postman - Service de Chat AGRIMA
 
-These are Postman-style gateway tests for the chat service, routed through the API Gateway at `http://localhost:8080`.
+Ce guide fournit des exemples de requêtes Postman pour tester le service de chat via l'API Gateway (`http://localhost:8080`).
 
-> The chat service itself is configured to run on `http://127.0.0.1:8092`, and the gateway forwards requests for `/api/chat/**` to it.
+Le service a été généralisé pour permettre des conversations entre n'importe quels rôles (PRODUCTEUR, CONSOMMATEUR, ADMIN, LIVREUR).
 
-## 1. Create Conversation
+## 1. Créer des utilisateurs de test (via user-service)
 
-- Method: `POST`
-- URL: `http://localhost:8080/api/chat/conversations`
-- Headers:
-  - `Content-Type: application/json`
-- Body:
+Avant de tester le chat, créez des utilisateurs avec différents rôles.
+
+- **Méthode**: `POST`
+- **URL**: `http://localhost:8080/api/users`
+- **Body (JSON)**:
 ```json
 {
-  "consumerId": 1,
-  "producerId": 2,
-  "sujet": "Question produit"
+  "email": "agriculteur@example.com",
+  "nom": "Dupont",
+  "prenom": "Jean",
+  "role": "PRODUCTEUR",
+  "statut": "Actif"
 }
 ```
-- Expected: `200 OK`
-- Notes:
-  - `consumerId` and `producerId` must be existing user IDs.
-  - `consumerId` represents the user in the consumer role, and `producerId` represents the user in the producer role.
-  - The response should contain `conversationId`, `consumerId`, `producerId`, and `sujet`.
+*Note: Répétez l'opération pour un CONSOMMATEUR, un LIVREUR, etc. Notez bien les `id` retournés.*
 
-## 2. Get Conversations by Consumer
+---
 
-- Method: `GET`
-- URL: `http://localhost:8080/api/chat/conversations/consumer/1`
-- Expected: `200 OK`
-- Notes: Returns a list of conversations where `consumerId` matches `1`.
+## 2. Créer une Conversation (Généralisé)
 
-## 3. Get Conversations by Producer
+- **Méthode**: `POST`
+- **URL**: `http://localhost:8080/api/chat/conversations`
+- **Body (JSON)**:
+```json
+{
+  "participant1Id": 1,
+  "participant2Id": 2,
+  "sujet": "Demande d'information sur les carottes"
+}
+```
+*Ici, l'ID 1 peut être un Producteur et l'ID 2 un Consommateur, ou n'importe quelle autre combinaison.*
 
-- Method: `GET`
-- URL: `http://localhost:8080/api/chat/conversations/producer/2`
-- Expected: `200 OK`
-- Notes: Returns a list of conversations where `producerId` matches `2`.
+---
 
-## 4. Get Conversation by ID
+## 3. Envoyer un Message
 
-- Method: `GET`
-- URL: `http://localhost:8080/api/chat/conversations/{id}`
-- Replace `{id}` with the `conversationId` returned from the create request.
-- Expected: `200 OK` if found, otherwise `404 Not Found`.
-
-## 5. Send Message
-
-- Method: `POST`
-- URL: `http://localhost:8080/api/chat/messages`
-- Headers:
-  - `Content-Type: application/json`
-- Body:
+- **Méthode**: `POST`
+- **URL**: `http://localhost:8080/api/chat/messages`
+- **Body (JSON)**:
 ```json
 {
   "conversationId": 1,
   "senderId": 1,
-  "body": "Bonjour, je souhaite plus de détails sur le produit."
+  "body": "Bonjour, est-ce que vos carottes sont bio ?"
 }
 ```
-- Expected: `200 OK`
-- Notes: The response should contain the created message data.
 
-## 6. Get Messages for Conversation
+---
 
-- Method: `GET`
-- URL: `http://localhost:8080/api/chat/conversations/1/messages`
-- Expected: `200 OK`
-- Notes: Returns message history for the specified conversation.
+## 4. Récupérer toutes les Conversations d'un Utilisateur
 
-## Gateway Validation Checklist
+Remplacez `{userId}` par l'ID de l'utilisateur (Producteur, Consommateur, Admin ou Livreur).
 
-- [ ] API Gateway is running on `http://localhost:8080`
-- [ ] Chat service is running on `http://127.0.0.1:8088`
-- [ ] Gateway route exists for `/api/chat/**`
-- [ ] Requests passing through the gateway return the same payload shape as the chat service
+- **Méthode**: `GET`
+- **URL**: `http://localhost:8080/api/chat/conversations/user/{userId}`
+
+---
+
+## 5. Récupérer les Messages d'une Conversation
+
+- **Méthode**: `GET`
+- **URL**: `http://localhost:8080/api/chat/conversations/{conversationId}/messages`
+
+---
+
+## 6. Récupérer une Conversation par ID
+
+- **Méthode**: `GET`
+- **URL**: `http://localhost:8080/api/chat/conversations/{id}`
+
+---
+
+## Résumé des Rôles Supportés
+Les conversations peuvent maintenant être créées entre :
+- **CONSOMMATEUR** <-> **PRODUCTEUR**
+- **PRODUCTEUR** <-> **LIVREUR**
+- **ADMIN** <-> **PRODUCTEUR**
+- **LIVREUR** <-> **CONSOMMATEUR**
+- etc.
