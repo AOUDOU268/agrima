@@ -21,7 +21,6 @@ public class ProfilAdminDTO {
     private Integer scoreConfiance;
     private Integer nbSignalements;
     private Double note;
-    private String portefeuille;
     private List<String> tags;
     
     // Champs additionnels pour producteurs

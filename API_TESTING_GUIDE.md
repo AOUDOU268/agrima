@@ -24,13 +24,13 @@ Ce document contient des exemples de tests pour tous les endpoints REST du servi
 
 #### cURL
 ```bash
-curl -X GET http://localhost:8082/api/utilisateurs \
+curl -X GET http://localhost:8082/api/users \
   -H "Content-Type: application/json"
 ```
 
 #### PowerShell
 ```powershell
-$response = Invoke-WebRequest -Uri "http://localhost:8082/api/utilisateurs" `
+$response = Invoke-WebRequest -Uri "http://localhost:8082/api/users" `
   -Method GET `
   -Headers @{"Content-Type" = "application/json"} `
   -UseBasicParsing
@@ -40,7 +40,7 @@ $response.Content | ConvertFrom-Json | ConvertTo-Json -Depth 10
 
 #### JavaScript (Fetch API)
 ```javascript
-fetch('http://localhost:8082/api/utilisateurs', {
+fetch('http://localhost:8082/api/users', {
   method: 'GET',
   headers: {
     'Content-Type': 'application/json'
@@ -53,7 +53,7 @@ fetch('http://localhost:8082/api/utilisateurs', {
 
 #### HTTPie
 ```bash
-http GET http://localhost:8082/api/utilisateurs
+http GET http://localhost:8082/api/users
 ```
 
 #### Réponse attendue (200 OK)
@@ -88,13 +88,13 @@ http GET http://localhost:8082/api/utilisateurs
 
 #### cURL
 ```bash
-curl -X GET http://localhost:8082/api/utilisateurs/1 \
+curl -X GET http://localhost:8082/api/users/1 \
   -H "Content-Type: application/json"
 ```
 
 #### PowerShell
 ```powershell
-$response = Invoke-WebRequest -Uri "http://localhost:8082/api/utilisateurs/1" `
+$response = Invoke-WebRequest -Uri "http://localhost:8082/api/users/1" `
   -Method GET `
   -Headers @{"Content-Type" = "application/json"} `
   -UseBasicParsing
@@ -104,7 +104,7 @@ $response.Content | ConvertFrom-Json | ConvertTo-Json -Depth 10
 
 #### JavaScript (Fetch API)
 ```javascript
-fetch('http://localhost:8082/api/utilisateurs/1', {
+fetch('http://localhost:8082/api/users/1', {
   method: 'GET',
   headers: {
     'Content-Type': 'application/json'
@@ -124,7 +124,7 @@ fetch('http://localhost:8082/api/utilisateurs/1', {
 
 #### HTTPie
 ```bash
-http GET http://localhost:8082/api/utilisateurs/1
+http GET http://localhost:8082/api/users/1
 ```
 
 #### Réponse attendue (200 OK)
@@ -157,7 +157,7 @@ http GET http://localhost:8082/api/utilisateurs/1
 
 #### cURL
 ```bash
-curl -X POST http://localhost:8082/api/utilisateurs \
+curl -X POST http://localhost:8082/api/users \
   -H "Content-Type: application/json" \
   -d '{
     "email": "alice@example.com",
@@ -180,7 +180,7 @@ $body = @{
     statut = "ACTIF"
 } | ConvertTo-Json
 
-$response = Invoke-WebRequest -Uri "http://localhost:8082/api/utilisateurs" `
+$response = Invoke-WebRequest -Uri "http://localhost:8082/api/users" `
   -Method POST `
   -Body $body `
   -ContentType "application/json" `
@@ -200,7 +200,7 @@ const userData = {
   statut: "ACTIF"
 };
 
-fetch('http://localhost:8082/api/utilisateurs', {
+fetch('http://localhost:8082/api/users', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'
@@ -223,7 +223,7 @@ fetch('http://localhost:8082/api/utilisateurs', {
 
 #### HTTPie
 ```bash
-http POST http://localhost:8082/api/utilisateurs \
+http POST http://localhost:8082/api/users \
   email="alice@example.com" \
   nom="Durand" \
   prenom="Alice" \
@@ -293,7 +293,7 @@ http POST http://localhost:8082/api/utilisateurs \
 
 #### cURL - Mise à jour partielle
 ```bash
-curl -X PUT http://localhost:8082/api/utilisateurs/1 \
+curl -X PUT http://localhost:8082/api/users/1 \
   -H "Content-Type: application/json" \
   -d '{
     "telephone": "+33699999999",
@@ -303,7 +303,7 @@ curl -X PUT http://localhost:8082/api/utilisateurs/1 \
 
 #### cURL - Mise à jour complète
 ```bash
-curl -X PUT http://localhost:8082/api/utilisateurs/1 \
+curl -X PUT http://localhost:8082/api/users/1 \
   -H "Content-Type: application/json" \
   -d '{
     "email": "john.updated@example.com",
@@ -322,7 +322,7 @@ $body = @{
     statut = "INACTIF"
 } | ConvertTo-Json
 
-$response = Invoke-WebRequest -Uri "http://localhost:8082/api/utilisateurs/1" `
+$response = Invoke-WebRequest -Uri "http://localhost:8082/api/users/1" `
   -Method PUT `
   -Body $body `
   -ContentType "application/json" `
@@ -338,7 +338,7 @@ const updateData = {
   statut: "INACTIF"
 };
 
-fetch('http://localhost:8082/api/utilisateurs/1', {
+fetch('http://localhost:8082/api/users/1', {
   method: 'PUT',
   headers: {
     'Content-Type': 'application/json'
@@ -361,7 +361,7 @@ fetch('http://localhost:8082/api/utilisateurs/1', {
 
 #### HTTPie
 ```bash
-http PUT http://localhost:8082/api/utilisateurs/1 \
+http PUT http://localhost:8082/api/users/1 \
   telephone="+33699999999" \
   statut="INACTIF"
 ```
@@ -396,13 +396,13 @@ http PUT http://localhost:8082/api/utilisateurs/1 \
 
 #### cURL
 ```bash
-curl -X DELETE http://localhost:8082/api/utilisateurs/1 \
+curl -X DELETE http://localhost:8082/api/users/1 \
   -H "Content-Type: application/json"
 ```
 
 #### PowerShell
 ```powershell
-$response = Invoke-WebRequest -Uri "http://localhost:8082/api/utilisateurs/1" `
+$response = Invoke-WebRequest -Uri "http://localhost:8082/api/users/1" `
   -Method DELETE `
   -Headers @{"Content-Type" = "application/json"} `
   -UseBasicParsing
@@ -413,7 +413,7 @@ Write-Host "Message: Utilisateur supprimé avec succès"
 
 #### JavaScript (Fetch API)
 ```javascript
-fetch('http://localhost:8082/api/utilisateurs/1', {
+fetch('http://localhost:8082/api/users/1', {
   method: 'DELETE',
   headers: {
     'Content-Type': 'application/json'
@@ -433,7 +433,7 @@ fetch('http://localhost:8082/api/utilisateurs/1', {
 
 #### HTTPie
 ```bash
-http DELETE http://localhost:8082/api/utilisateurs/1
+http DELETE http://localhost:8082/api/users/1
 ```
 
 #### Réponse attendue (204 NO CONTENT)
@@ -477,7 +477,7 @@ Créez un fichier `postman_collection.json` avec le contenu suivant:
           }
         ],
         "url": {
-          "raw": "http://localhost:8082/api/utilisateurs",
+          "raw": "http://localhost:8082/api/users",
           "protocol": "http",
           "host": ["localhost"],
           "port": "8082",
@@ -496,7 +496,7 @@ Créez un fichier `postman_collection.json` avec le contenu suivant:
           }
         ],
         "url": {
-          "raw": "http://localhost:8082/api/utilisateurs/1",
+          "raw": "http://localhost:8082/api/users/1",
           "protocol": "http",
           "host": ["localhost"],
           "port": "8082",
@@ -519,7 +519,7 @@ Créez un fichier `postman_collection.json` avec le contenu suivant:
           "raw": "{\n  \"email\": \"test@example.com\",\n  \"nom\": \"Test\",\n  \"prenom\": \"User\",\n  \"telephone\": \"+33612345678\",\n  \"role\": \"USER\",\n  \"statut\": \"ACTIF\"\n}"
         },
         "url": {
-          "raw": "http://localhost:8082/api/utilisateurs",
+          "raw": "http://localhost:8082/api/users",
           "protocol": "http",
           "host": ["localhost"],
           "port": "8082",
@@ -542,7 +542,7 @@ Créez un fichier `postman_collection.json` avec le contenu suivant:
           "raw": "{\n  \"telephone\": \"+33699999999\",\n  \"statut\": \"INACTIF\"\n}"
         },
         "url": {
-          "raw": "http://localhost:8082/api/utilisateurs/1",
+          "raw": "http://localhost:8082/api/users/1",
           "protocol": "http",
           "host": ["localhost"],
           "port": "8082",
@@ -561,7 +561,7 @@ Créez un fichier `postman_collection.json` avec le contenu suivant:
           }
         ],
         "url": {
-          "raw": "http://localhost:8082/api/utilisateurs/1",
+          "raw": "http://localhost:8082/api/users/1",
           "protocol": "http",
           "host": ["localhost"],
           "port": "8082",
@@ -635,13 +635,13 @@ Puis, dans Postman:
 $baseUrl = "http://localhost:8082"
 
 # Test 1: GET tous les utilisateurs
-Write-Host "=== TEST 1: GET /api/utilisateurs ===" -ForegroundColor Green
-$response = Invoke-WebRequest -Uri "$baseUrl/api/utilisateurs" -Method GET -UseBasicParsing
+Write-Host "=== TEST 1: GET /api/users ===" -ForegroundColor Green
+$response = Invoke-WebRequest -Uri "$baseUrl/api/users" -Method GET -UseBasicParsing
 Write-Host "Status: $($response.StatusCode)"
 $response.Content | ConvertFrom-Json | ConvertTo-Json
 
 # Test 2: POST - Créer utilisateur
-Write-Host "`n=== TEST 2: POST /api/utilisateurs ===" -ForegroundColor Green
+Write-Host "\n=== TEST 2: POST /api/users ===" -ForegroundColor Green
 $body = @{
     email = "test$(Get-Random)@example.com"
     nom = "Test"
@@ -650,7 +650,7 @@ $body = @{
 } | ConvertTo-Json
 
 try {
-    $response = Invoke-WebRequest -Uri "$baseUrl/api/utilisateurs" -Method POST -Body $body -ContentType "application/json" -UseBasicParsing
+    $response = Invoke-WebRequest -Uri "$baseUrl/api/users" -Method POST -Body $body -ContentType "application/json" -UseBasicParsing
     Write-Host "Status: $($response.StatusCode)"
     $userId = ($response.Content | ConvertFrom-Json).id
     Write-Host "Utilisateur créé avec ID: $userId"
@@ -661,25 +661,25 @@ try {
 }
 
 # Test 3: GET utilisateur par ID
-Write-Host "`n=== TEST 3: GET /api/utilisateurs/{id} ===" -ForegroundColor Green
-$response = Invoke-WebRequest -Uri "$baseUrl/api/utilisateurs/$userId" -Method GET -UseBasicParsing
+Write-Host "\n=== TEST 3: GET /api/users/{id} ===" -ForegroundColor Green
+$response = Invoke-WebRequest -Uri "$baseUrl/api/users/$userId" -Method GET -UseBasicParsing
 Write-Host "Status: $($response.StatusCode)"
 $response.Content | ConvertFrom-Json | ConvertTo-Json
 
 # Test 4: PUT - Mettre à jour
-Write-Host "`n=== TEST 4: PUT /api/utilisateurs/{id} ===" -ForegroundColor Green
+Write-Host "\n=== TEST 4: PUT /api/users/{id} ===" -ForegroundColor Green
 $updateBody = @{
     telephone = "+33699999999"
     statut = "INACTIF"
 } | ConvertTo-Json
 
-$response = Invoke-WebRequest -Uri "$baseUrl/api/utilisateurs/$userId" -Method PUT -Body $updateBody -ContentType "application/json" -UseBasicParsing
+$response = Invoke-WebRequest -Uri "$baseUrl/api/users/$userId" -Method PUT -Body $updateBody -ContentType "application/json" -UseBasicParsing
 Write-Host "Status: $($response.StatusCode)"
 $response.Content | ConvertFrom-Json | ConvertTo-Json
 
 # Test 5: DELETE
-Write-Host "`n=== TEST 5: DELETE /api/utilisateurs/{id} ===" -ForegroundColor Green
-$response = Invoke-WebRequest -Uri "$baseUrl/api/utilisateurs/$userId" -Method DELETE -UseBasicParsing
+Write-Host "\n=== TEST 5: DELETE /api/users/{id} ===" -ForegroundColor Green
+$response = Invoke-WebRequest -Uri "$baseUrl/api/users/$userId" -Method DELETE -UseBasicParsing
 Write-Host "Status: $($response.StatusCode)"
 Write-Host "Utilisateur supprimé avec succès"
 ```
@@ -703,3 +703,4 @@ powershell -ExecutionPolicy Bypass -File test_api.ps1
 ---
 
 **Dernière mise à jour:** 25 avril 2026
+

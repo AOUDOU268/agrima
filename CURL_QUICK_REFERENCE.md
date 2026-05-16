@@ -12,14 +12,14 @@ $base_url = "http://localhost:8082"
 ## 1️⃣ GET - Récupérer tous les utilisateurs
 
 ```bash
-curl -X GET http://localhost:8082/api/utilisateurs \
+curl -X GET http://localhost:8082/api/users \
   -H "Content-Type: application/json"
 ```
 
 **PowerShell:**
 ```powershell
 $base_url = "http://localhost:8082"
-Invoke-WebRequest -Uri "$base_url/api/utilisateurs" -Method GET -UseBasicParsing | ConvertFrom-Json
+Invoke-WebRequest -Uri "$base_url/api/users" -Method GET -UseBasicParsing | ConvertFrom-Json
 ```
 
 **Réponse attendue:** `200 OK` avec liste des utilisateurs
@@ -29,13 +29,13 @@ Invoke-WebRequest -Uri "$base_url/api/utilisateurs" -Method GET -UseBasicParsing
 ## 2️⃣ GET - Récupérer un utilisateur par ID
 
 ```bash
-curl -X GET http://localhost:8082/api/utilisateurs/1 \
+curl -X GET http://localhost:8082/api/users/1 \
   -H "Content-Type: application/json"
 ```
 
 **PowerShell:**
 ```powershell
-Invoke-WebRequest -Uri "http://localhost:8082/api/utilisateurs/1" -Method GET -UseBasicParsing | ConvertFrom-Json
+Invoke-WebRequest -Uri "http://localhost:8082/api/users/1" -Method GET -UseBasicParsing | ConvertFrom-Json
 ```
 
 **Réponse attendue:** `200 OK` avec données utilisateur ou `404 NOT FOUND`
@@ -47,7 +47,7 @@ Invoke-WebRequest -Uri "http://localhost:8082/api/utilisateurs/1" -Method GET -U
 ### Exemple simple
 
 ```bash
-curl -X POST http://localhost:8082/api/utilisateurs \
+curl -X POST http://localhost:8082/api/users \
   -H "Content-Type: application/json" \
   -d '{
     "email": "jean.dupont@example.com",
@@ -71,7 +71,7 @@ $body = @{
     statut = "ACTIF"
 } | ConvertTo-Json
 
-Invoke-WebRequest -Uri "http://localhost:8082/api/utilisateurs" `
+Invoke-WebRequest -Uri "http://localhost:8082/api/users" `
   -Method POST `
   -Body $body `
   -ContentType "application/json" `
@@ -82,7 +82,7 @@ Invoke-WebRequest -Uri "http://localhost:8082/api/utilisateurs" `
 
 ```bash
 timestamp=$(date +%s)
-curl -X POST http://localhost:8082/api/utilisateurs \
+curl -X POST http://localhost:8082/api/users \
   -H "Content-Type: application/json" \
   -d "{
     \"email\": \"test.$timestamp@example.com\",
@@ -102,7 +102,7 @@ $body = @{
     role = "USER"
 } | ConvertTo-Json
 
-Invoke-WebRequest -Uri "http://localhost:8082/api/utilisateurs" `
+Invoke-WebRequest -Uri "http://localhost:8082/api/users" `
   -Method POST `
   -Body $body `
   -ContentType "application/json" `
@@ -118,7 +118,7 @@ Invoke-WebRequest -Uri "http://localhost:8082/api/utilisateurs" `
 ### Mise à jour partielle (certains champs)
 
 ```bash
-curl -X PUT http://localhost:8082/api/utilisateurs/1 \
+curl -X PUT http://localhost:8082/api/users/1 \
   -H "Content-Type: application/json" \
   -d '{
     "telephone": "+33699999999",
@@ -133,7 +133,7 @@ $body = @{
     statut = "INACTIF"
 } | ConvertTo-Json
 
-Invoke-WebRequest -Uri "http://localhost:8082/api/utilisateurs/1" `
+Invoke-WebRequest -Uri "http://localhost:8082/api/users/1" `
   -Method PUT `
   -Body $body `
   -ContentType "application/json" `
@@ -143,7 +143,7 @@ Invoke-WebRequest -Uri "http://localhost:8082/api/utilisateurs/1" `
 ### Mise à jour complète (tous les champs)
 
 ```bash
-curl -X PUT http://localhost:8082/api/utilisateurs/1 \
+curl -X PUT http://localhost:8082/api/users/1 \
   -H "Content-Type: application/json" \
   -d '{
     "email": "newemail@example.com",
@@ -162,13 +162,13 @@ curl -X PUT http://localhost:8082/api/utilisateurs/1 \
 ## 5️⃣ DELETE - Supprimer un utilisateur
 
 ```bash
-curl -X DELETE http://localhost:8082/api/utilisateurs/1 \
+curl -X DELETE http://localhost:8082/api/users/1 \
   -H "Content-Type: application/json"
 ```
 
 **PowerShell:**
 ```powershell
-Invoke-WebRequest -Uri "http://localhost:8082/api/utilisateurs/1" `
+Invoke-WebRequest -Uri "http://localhost:8082/api/users/1" `
   -Method DELETE `
   -Headers @{"Content-Type" = "application/json"} `
   -UseBasicParsing
@@ -301,11 +301,11 @@ DELETE FROM utilisateurs WHERE id = 5;
 
 ## 🎯 Checkliste de test
 
-- [ ] **GET /api/utilisateurs** - Récupère la liste (200 OK)
-- [ ] **POST /api/utilisateurs** - Crée un utilisateur (201 CREATED)
-- [ ] **GET /api/utilisateurs/{id}** - Récupère par ID (200 OK)
-- [ ] **PUT /api/utilisateurs/{id}** - Met à jour (200 OK)
-- [ ] **DELETE /api/utilisateurs/{id}** - Supprime (204 NO CONTENT)
+- [ ] **GET /api/users** - Récupère la liste (200 OK)
+- [ ] **POST /api/users** - Crée un utilisateur (201 CREATED)
+- [ ] **GET /api/users/{id}** - Récupère par ID (200 OK)
+- [ ] **PUT /api/users/{id}** - Met à jour (200 OK)
+- [ ] **DELETE /api/users/{id}** - Supprime (204 NO CONTENT)
 - [ ] **POST duplicate email** - Retourne 409 CONFLICT
 - [ ] **POST invalid email** - Retourne 400 BAD REQUEST
 - [ ] **GET non-existent ID** - Retourne 404 NOT FOUND
@@ -352,10 +352,10 @@ $body = @{
     prenom = "User"
     role = "USER"
 } | ConvertTo-Json
-Invoke-WebRequest "http://localhost:8082/api/utilisateurs" -Method POST -Body $body -ContentType "application/json"
+Invoke-WebRequest "http://localhost:8082/api/users" -Method POST -Body $body -ContentType "application/json"
 
 # 3. Récupérer tous les utilisateurs
-curl http://localhost:8082/api/utilisateurs
+curl http://localhost:8082/api/users
 
 # 4. Exécuter les tests complets
 powershell -ExecutionPolicy Bypass -File test_api_complete.ps1
@@ -364,3 +364,4 @@ powershell -ExecutionPolicy Bypass -File test_api_complete.ps1
 ---
 
 **Dernière mise à jour:** 25 avril 2026
+

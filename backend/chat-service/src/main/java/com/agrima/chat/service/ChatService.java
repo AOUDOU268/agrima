@@ -1,5 +1,6 @@
 package com.agrima.chat.service;
 
+import com.agrima.chat.client.UserClient;
 import com.agrima.chat.dto.ConversationRequestDto;
 import com.agrima.chat.dto.ConversationResponseDto;
 import com.agrima.chat.dto.MessageRequestDto;
@@ -22,14 +23,24 @@ public class ChatService {
 
     private final ConversationRepository conversationRepository;
     private final MessageRepository messageRepository;
+    private final UserClient userClient;
 
-    public ChatService(ConversationRepository conversationRepository, MessageRepository messageRepository) {
+    public ChatService(ConversationRepository conversationRepository, MessageRepository messageRepository, UserClient userClient) {
         this.conversationRepository = conversationRepository;
         this.messageRepository = messageRepository;
+        this.userClient = userClient;
     }
 
     @Transactional
     public ConversationResponseDto createConversation(ConversationRequestDto request) {
+        // Validate that both users exist in user-service
+        if (!userClient.userExists(request.getConsumerId())) {
+            throw new IllegalArgumentException("Consumer with ID " + request.getConsumerId() + " does not exist");
+        }
+        if (!userClient.userExists(request.getProducerId())) {
+            throw new IllegalArgumentException("Producer with ID " + request.getProducerId() + " does not exist");
+        }
+        
         Conversation conversation = ChatMapper.toConversation(request);
         Conversation saved = conversationRepository.save(conversation);
         return ChatMapper.toConversationResponse(saved);

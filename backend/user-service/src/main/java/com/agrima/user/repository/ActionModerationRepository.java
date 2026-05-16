@@ -1,7 +1,7 @@
 package com.agrima.user.repository;
 
 import com.agrima.user.model.ActionModeration;
-import com.agrima.user.model.Utilisateur;
+import com.agrima.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,11 +15,11 @@ import java.util.List;
 @Repository
 public interface ActionModerationRepository extends JpaRepository<ActionModeration, Long> {
 
-    List<ActionModeration> findByUtilisateur(Utilisateur utilisateur);
+    List<ActionModeration> findByUser(User user);
 
     List<ActionModeration> findByStatut(String statut);
 
     Long countByDateActionBetween(LocalDateTime debut, LocalDateTime fin);
 
-    List<ActionModeration> findByUtilisateurIdOrderByDateActionDesc(Long utilisateurId);
+    List<ActionModeration> findByUserIdOrderByDateActionDesc(Long userId);
 }

@@ -9,12 +9,17 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UtilisateurDTO {
-    private Long id;
+public class UpdateUserRequest {
+    
     private String email;
+    
     private String nom;
+    
     private String prenom;
+    
     private String telephone;
+    
     private String role;
+    
     private String statut;
 }

@@ -22,13 +22,13 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         AppUser user = repository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-        var roles = user.getRoles().stream()
-                .map(Enum::name)
+        var authorities = user.getRoles().stream()
+                .map(role -> new org.springframework.security.core.authority.SimpleGrantedAuthority(role.name()))
                 .collect(Collectors.toSet());
         return User.builder()
                 .username(user.getEmail())
                 .password(user.getPasswordHash())
-                .roles(roles.toArray(String[]::new))
+                .authorities(authorities)
                 .build();
     }
 }

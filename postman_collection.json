@@ -34,7 +34,7 @@
           }
         ],
         "url": {
-          "raw": "{{base_url}}/api/utilisateurs",
+          "raw": "{{base_url}}/api/users",
           "host": ["{{base_url}}"],
           "path": ["api", "utilisateurs"]
         },
@@ -72,7 +72,7 @@
           }
         ],
         "url": {
-          "raw": "{{base_url}}/api/utilisateurs/1",
+          "raw": "{{base_url}}/api/users/1",
           "host": ["{{base_url}}"],
           "path": ["api", "utilisateurs", "1"]
         },
@@ -116,7 +116,7 @@
           "raw": "{\n  \"email\": \"test.{{$timestamp}}@example.com\",\n  \"nom\": \"TestNom\",\n  \"prenom\": \"TestPrenom\",\n  \"telephone\": \"+33612345678\",\n  \"role\": \"USER\",\n  \"statut\": \"ACTIF\"\n}"
         },
         "url": {
-          "raw": "{{base_url}}/api/utilisateurs",
+          "raw": "{{base_url}}/api/users",
           "host": ["{{base_url}}"],
           "path": ["api", "utilisateurs"]
         },
@@ -155,7 +155,7 @@
           "raw": "{\n  \"email\": \"duplicate@example.com\",\n  \"nom\": \"Duplicate\",\n  \"prenom\": \"User\",\n  \"telephone\": \"+33612345678\",\n  \"role\": \"USER\",\n  \"statut\": \"ACTIF\"\n}"
         },
         "url": {
-          "raw": "{{base_url}}/api/utilisateurs",
+          "raw": "{{base_url}}/api/users",
           "host": ["{{base_url}}"],
           "path": ["api", "utilisateurs"]
         },
@@ -194,7 +194,7 @@
           "raw": "{\n  \"email\": \"invalid-email\",\n  \"nom\": \"Test\",\n  \"prenom\": \"User\",\n  \"role\": \"USER\"\n}"
         },
         "url": {
-          "raw": "{{base_url}}/api/utilisateurs",
+          "raw": "{{base_url}}/api/users",
           "host": ["{{base_url}}"],
           "path": ["api", "utilisateurs"]
         },
@@ -233,7 +233,7 @@
           "raw": "{\n  \"email\": \"test@example.com\",\n  \"nom\": \"Test\"\n}"
         },
         "url": {
-          "raw": "{{base_url}}/api/utilisateurs",
+          "raw": "{{base_url}}/api/users",
           "host": ["{{base_url}}"],
           "path": ["api", "utilisateurs"]
         },
@@ -272,7 +272,7 @@
           "raw": "{\n  \"telephone\": \"+33699999999\",\n  \"statut\": \"INACTIF\"\n}"
         },
         "url": {
-          "raw": "{{base_url}}/api/utilisateurs/1",
+          "raw": "{{base_url}}/api/users/1",
           "host": ["{{base_url}}"],
           "path": ["api", "utilisateurs", "1"]
         },
@@ -312,7 +312,7 @@
           "raw": "{\n  \"email\": \"updated@example.com\",\n  \"nom\": \"NouveauNom\",\n  \"prenom\": \"NouveauPrenom\",\n  \"telephone\": \"+33712345678\",\n  \"role\": \"ADMIN\",\n  \"statut\": \"ACTIF\"\n}"
         },
         "url": {
-          "raw": "{{base_url}}/api/utilisateurs/1",
+          "raw": "{{base_url}}/api/users/1",
           "host": ["{{base_url}}"],
           "path": ["api", "utilisateurs", "1"]
         },
@@ -347,7 +347,7 @@
           "raw": "{\n  \"telephone\": \"+33699999999\"\n}"
         },
         "url": {
-          "raw": "{{base_url}}/api/utilisateurs/99999",
+          "raw": "{{base_url}}/api/users/99999",
           "host": ["{{base_url}}"],
           "path": ["api", "utilisateurs", "99999"]
         },
@@ -378,7 +378,7 @@
           }
         ],
         "url": {
-          "raw": "{{base_url}}/api/utilisateurs/1",
+          "raw": "{{base_url}}/api/users/1",
           "host": ["{{base_url}}"],
           "path": ["api", "utilisateurs", "1"]
         },
@@ -409,7 +409,7 @@
           }
         ],
         "url": {
-          "raw": "{{base_url}}/api/utilisateurs/99999",
+          "raw": "{{base_url}}/api/users/99999",
           "host": ["{{base_url}}"],
           "path": ["api", "utilisateurs", "99999"]
         },
@@ -455,3 +455,4 @@
     }
   ]
 }
+

@@ -23,8 +23,8 @@ public class ActionModeration {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "utilisateur_id", nullable = false)
-    private Utilisateur utilisateur;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(nullable = false)
     private String type; // VALIDATION, SUSPENSION, AVERTISSEMENT, CONTACT, BLOCAGE, REACTIVATION

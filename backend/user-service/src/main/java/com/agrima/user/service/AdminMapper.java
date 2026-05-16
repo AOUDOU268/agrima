@@ -3,7 +3,7 @@ package com.agrima.user.service;
 import com.agrima.user.dto.ActionModerationDTO;
 import com.agrima.user.dto.ProfilAdminDTO;
 import com.agrima.user.model.ActionModeration;
-import com.agrima.user.model.Utilisateur;
+import com.agrima.user.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -16,14 +16,14 @@ public interface AdminMapper {
     AdminMapper INSTANCE = Mappers.getMapper(AdminMapper.class);
 
     /**
-     * Mappe une entité Utilisateur vers ProfilAdminDTO
+     * Mappe une entité User vers ProfilAdminDTO
      */
-    ProfilAdminDTO toProfilAdminDTO(Utilisateur utilisateur);
+    ProfilAdminDTO toProfilAdminDTO(User user);
 
     /**
-     * Mappe une entité Utilisateur vers ProfilAdminDTO (inverse)
+     * Mappe une entité User vers ProfilAdminDTO (inverse)
      */
-    Utilisateur toUtilisateur(ProfilAdminDTO dto);
+    User toUser(ProfilAdminDTO dto);
 
     /**
      * Mappe une entité ActionModeration vers ActionModerationDTO

@@ -1,11 +1,6 @@
-﻿spring:
+spring:
   application:
     name: payment-service
-server:
-  port: 8085
-
-# Centralized datasource + actuator settings (can be overridden by env or service-specific yaml)
-spring:
   datasource:
     url: ${SPRING_DATASOURCE_URL:}
     username: ${SPRING_DATASOURCE_USERNAME:}
@@ -14,6 +9,9 @@ spring:
     hikari:
       maximum-pool-size: ${SPRING_DATASOURCE_MAX_POOL:10}
       minimum-idle: ${SPRING_DATASOURCE_MIN_IDLE:2}
+
+server:
+  port: 8085
 
 management:
   endpoints:

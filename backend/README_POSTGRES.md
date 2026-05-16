@@ -61,7 +61,7 @@ Toutes les requêtes doivent passer par le port **8080**.
 
 **Créer un utilisateur :**
 ```bash
-curl -X POST http://localhost:8080/api/utilisateurs \
+curl -X POST http://localhost:8080/api/users \
   -H "Content-Type: application/json" \
   -d '{"email": "user@test.com", "nom": "Nom", "prenom": "Prenom", "role": "ROLE_CONSOMMATEUR"}'
 ```
@@ -80,3 +80,4 @@ curl http://localhost:8080/gateway-health
 - **Erreur de connexion DB** : Vérifiez que PostgreSQL écoute bien sur le port 5432 et que les identifiants sont corrects.
 - **Service non trouvé** : Assurez-vous que le microservice cible est bien démarré avant de l'appeler via la Gateway.
 - **Conflit de port** : Si le port 8080 est déjà utilisé, changez `server.port` dans le `application.yml` de l'API Gateway.
+

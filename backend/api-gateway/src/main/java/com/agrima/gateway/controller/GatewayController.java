@@ -14,7 +14,7 @@ public class GatewayController {
         .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(2 * 1024 * 1024))
         .build();
 
-    @RequestMapping(value = {"/api/utilisateurs", "/api/utilisateurs/**", "/api/users/**"}, method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
+    @RequestMapping(value = {"/api/users/**"}, method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
     public Mono<ResponseEntity<byte[]>> proxyUser(ServerHttpRequest request, @RequestBody(required = false) byte[] body) {
         return proxy("http://127.0.0.1:8082", request, body);
     }

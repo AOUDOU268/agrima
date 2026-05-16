@@ -124,7 +124,7 @@ mvn spring-boot:run
 ```
 
 **URL:** http://localhost:8082
-**API:** http://localhost:8082/api/utilisateurs
+**API:** http://localhost:8082/api/users
 
 ---
 
@@ -244,7 +244,7 @@ curl http://localhost:8080/actuator/health
 curl http://localhost:8082/actuator/health
 
 # API Utilisateurs
-curl http://localhost:8082/api/utilisateurs
+curl http://localhost:8082/api/users
 ```
 
 ### Test complet avec script
@@ -439,3 +439,4 @@ top -p $(pgrep -d, java)
 ---
 
 **Dernière mise à jour:** 25 avril 2026
+

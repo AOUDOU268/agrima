@@ -1,9 +1,9 @@
 package com.agrima.user.service;
 
 import com.agrima.user.dto.*;
-import com.agrima.user.model.Utilisateur;
+import com.agrima.user.model.User;
 import com.agrima.user.model.ActionModeration;
-import com.agrima.user.repository.UtilisateurRepository;
+import com.agrima.user.repository.UserRepository;
 import com.agrima.user.repository.ActionModerationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,25 +23,25 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AdminService {
 
-    private final UtilisateurRepository utilisateurRepository;
+    private final UserRepository userRepository;
     private final ActionModerationRepository actionModerationRepository;
     private final NotificationService notificationService;
-    private final AdminMapper adminMapper;
+    private final AdminMapper adminMapper = AdminMapper.INSTANCE;
 
     // ========== GESTION DES PROFILS ==========
 
     public Page<ProfilAdminDTO> obtenirProfilsFiltres(String role, String statut, Pageable pageable) {
         log.info("Récupération des profils - role: {}, statut: {}", role, statut);
         
-        Page<Utilisateur> profils;
+        Page<User> profils;
         if (role != null && statut != null) {
-            profils = utilisateurRepository.findByRoleAndStatut(role, statut, pageable);
+            profils = userRepository.findByRoleAndStatut(role, statut, pageable);
         } else if (role != null) {
-            profils = utilisateurRepository.findByRole(role, pageable);
+            profils = userRepository.findByRole(role, pageable);
         } else if (statut != null) {
-            profils = utilisateurRepository.findByStatut(statut, pageable);
+            profils = userRepository.findByStatut(statut, pageable);
         } else {
-            profils = utilisateurRepository.findAll(pageable);
+            profils = userRepository.findAll(pageable);
         }
         
         return profils.map(adminMapper::toProfilAdminDTO);
@@ -49,14 +49,14 @@ public class AdminService {
 
     public ProfilAdminDTO obtenirProfil(Long id) {
         log.info("Récupération du profil: {}", id);
-        Utilisateur utilisateur = utilisateurRepository.findById(id)
+        User user = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Profil non trouvé: " + id));
-        return adminMapper.toProfilAdminDTO(utilisateur);
+        return adminMapper.toProfilAdminDTO(user);
     }
 
     public List<ProfilAdminDTO> obtenirProfilsUrgents() {
         log.info("Récupération des profils urgents");
-        List<Utilisateur> profils = utilisateurRepository.findByNbSignalementsGreaterThanOrStatut(3, "Signalé");
+        List<User> profils = userRepository.findByNbSignalementsGreaterThanOrStatut(3, "Signalé");
         return profils.stream()
             .map(adminMapper::toProfilAdminDTO)
             .collect(Collectors.toList());
@@ -65,23 +65,23 @@ public class AdminService {
     public ProfilAdminDTO mettreAJourProfil(Long id, UpdateProfilRequest request) {
         log.info("Mise à jour du profil: {}", id);
         
-        Utilisateur utilisateur = utilisateurRepository.findById(id)
+        User user = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Profil non trouvé: " + id));
 
         if (request.getTelephone() != null) {
-            utilisateur.setTelephone(request.getTelephone());
+            user.setTelephone(request.getTelephone());
         }
         if (request.getLocalisation() != null) {
-            utilisateur.setLocalisation(request.getLocalisation());
+            user.setLocalisation(request.getLocalisation());
         }
         if (request.getStatut() != null) {
-            utilisateur.setStatut(request.getStatut());
+            user.setStatut(request.getStatut());
         }
         if (request.getScoreConfiance() != null) {
-            utilisateur.setScoreConfiance(request.getScoreConfiance());
+            user.setScoreConfiance(request.getScoreConfiance());
         }
 
-        Utilisateur updated = utilisateurRepository.save(utilisateur);
+        User updated = userRepository.save(user);
         
         log.info("Profil mis à jour avec succès: {}", id);
         return adminMapper.toProfilAdminDTO(updated);
@@ -89,7 +89,7 @@ public class AdminService {
 
     public void supprimerProfil(Long id) {
         log.info("Suppression du profil: {}", id);
-        utilisateurRepository.deleteById(id);
+        userRepository.deleteById(id);
     }
 
     // ========== ACTIONS DE MODERATION ==========
@@ -97,14 +97,14 @@ public class AdminService {
     public ProfilAdminDTO validerProfil(Long id, String raison) {
         log.info("Validation du profil: {}", id);
         
-        Utilisateur utilisateur = utilisateurRepository.findById(id)
+        User user = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Profil non trouvé: " + id));
 
-        utilisateur.setStatut("Validé");
-        Utilisateur updated = utilisateurRepository.save(utilisateur);
+        user.setStatut("Validé");
+        User updated = userRepository.save(user);
 
         ActionModeration action = ActionModeration.builder()
-            .utilisateur(utilisateur)
+            .user(user)
             .type("VALIDATION")
             .description("Profil validé par l'administrateur")
             .raison(raison)
@@ -113,7 +113,7 @@ public class AdminService {
             .build();
         actionModerationRepository.save(action);
 
-        notificationService.notifierValidation(utilisateur);
+        notificationService.notifierValidation(user);
 
         return adminMapper.toProfilAdminDTO(updated);
     }
@@ -121,16 +121,16 @@ public class AdminService {
     public ProfilAdminDTO suspendreTemporairement(Long id, Integer duree, String raison) {
         log.info("Suspension temporaire du profil: {} pour {} jours", id, duree);
         
-        Utilisateur utilisateur = utilisateurRepository.findById(id)
+        User user = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Profil non trouvé: " + id));
 
-        utilisateur.setStatut("Suspendu");
-        utilisateur.setDateSuspension(LocalDateTime.now());
-        utilisateur.setDureeSuspension(duree);
-        Utilisateur updated = utilisateurRepository.save(utilisateur);
+        user.setStatut("Suspendu");
+        user.setDateSuspension(LocalDateTime.now());
+        user.setDureeSuspension(duree);
+        User updated = userRepository.save(user);
 
         ActionModeration action = ActionModeration.builder()
-            .utilisateur(utilisateur)
+            .user(user)
             .type("SUSPENSION")
             .description("Profil suspendu temporairement pour " + duree + " jours")
             .raison(raison)
@@ -139,24 +139,24 @@ public class AdminService {
             .build();
         actionModerationRepository.save(action);
 
-        notificationService.notifierSuspension(utilisateur, duree, raison);
+        notificationService.notifierSuspension(user, duree, raison);
 
         return adminMapper.toProfilAdminDTO(updated);
     }
 
     public ProfilAdminDTO reactiverProfil(Long id) {
-        log.info("Récupération du profil: {}", id);
+        log.info("Réactivation du profil: {}", id);
         
-        Utilisateur utilisateur = utilisateurRepository.findById(id)
+        User user = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Profil non trouvé: " + id));
 
-        utilisateur.setStatut("Actif");
-        utilisateur.setDateSuspension(null);
-        utilisateur.setDureeSuspension(null);
-        Utilisateur updated = utilisateurRepository.save(utilisateur);
+        user.setStatut("Actif");
+        user.setDateSuspension(null);
+        user.setDureeSuspension(null);
+        User updated = userRepository.save(user);
 
         ActionModeration action = ActionModeration.builder()
-            .utilisateur(utilisateur)
+            .user(user)
             .type("REACTIVATION")
             .description("Profil réactivé")
             .dateAction(LocalDateTime.now())
@@ -164,7 +164,7 @@ public class AdminService {
             .build();
         actionModerationRepository.save(action);
 
-        notificationService.notifierReactivation(utilisateur);
+        notificationService.notifierReactivation(user);
 
         return adminMapper.toProfilAdminDTO(updated);
     }
@@ -172,11 +172,11 @@ public class AdminService {
     public ActionModerationDTO ajouterAvertissement(Long id, String raison, String details) {
         log.info("Ajout d'un avertissement au profil: {}", id);
         
-        Utilisateur utilisateur = utilisateurRepository.findById(id)
+        User user = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Profil non trouvé: " + id));
 
         ActionModeration action = ActionModeration.builder()
-            .utilisateur(utilisateur)
+            .user(user)
             .type("AVERTISSEMENT")
             .description("Avertissement: " + details)
             .raison(raison)
@@ -185,7 +185,7 @@ public class AdminService {
             .build();
         ActionModeration saved = actionModerationRepository.save(action);
 
-        notificationService.notifierAvertissement(utilisateur, raison);
+        notificationService.notifierAvertissement(user, raison);
 
         return adminMapper.toActionModerationDTO(saved);
     }
@@ -193,15 +193,15 @@ public class AdminService {
     public ProfilAdminDTO bloquerProfil(Long id, String raison) {
         log.info("Blocage du profil: {}", id);
         
-        Utilisateur utilisateur = utilisateurRepository.findById(id)
+        User user = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Profil non trouvé: " + id));
 
-        utilisateur.setStatut("Bloqué");
-        utilisateur.setDateBlocage(LocalDateTime.now());
-        Utilisateur updated = utilisateurRepository.save(utilisateur);
+        user.setStatut("Bloqué");
+        user.setDateBlocage(LocalDateTime.now());
+        User updated = userRepository.save(user);
 
         ActionModeration action = ActionModeration.builder()
-            .utilisateur(utilisateur)
+            .user(user)
             .type("BLOCAGE")
             .description("Profil bloqué définitivement")
             .raison(raison)
@@ -210,7 +210,7 @@ public class AdminService {
             .build();
         actionModerationRepository.save(action);
 
-        notificationService.notifierBlocage(utilisateur, raison);
+        notificationService.notifierBlocage(user, raison);
 
         return adminMapper.toProfilAdminDTO(updated);
     }
@@ -218,11 +218,11 @@ public class AdminService {
     public MessageDTO envoyerMessage(Long id, String sujet, String contenu) {
         log.info("Envoi d'un message au profil: {}", id);
         
-        Utilisateur utilisateur = utilisateurRepository.findById(id)
+        User user = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Profil non trouvé: " + id));
 
         ActionModeration action = ActionModeration.builder()
-            .utilisateur(utilisateur)
+            .user(user)
             .type("CONTACT")
             .description("Message: " + sujet)
             .raison(contenu)
@@ -231,7 +231,7 @@ public class AdminService {
             .build();
         actionModerationRepository.save(action);
 
-        notificationService.envoyerMessage(utilisateur, sujet, contenu);
+        notificationService.envoyerMessage(user, sujet, contenu);
 
         return MessageDTO.builder()
             .profilId(id)
@@ -245,10 +245,10 @@ public class AdminService {
     public List<ActionModerationDTO> obtenirHistoriqueActions(Long id) {
         log.info("Récupération de l'historique des actions du profil: {}", id);
         
-        Utilisateur utilisateur = utilisateurRepository.findById(id)
+        User user = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Profil non trouvé: " + id));
 
-        List<ActionModeration> actions = actionModerationRepository.findByUtilisateur(utilisateur);
+        List<ActionModeration> actions = actionModerationRepository.findByUser(user);
         return actions.stream()
             .map(adminMapper::toActionModerationDTO)
             .collect(Collectors.toList());
@@ -259,11 +259,11 @@ public class AdminService {
     public ProfilAdminDTO assignerRole(Long id, String role) {
         log.info("Assignation du rôle {} au profil: {}", role, id);
         
-        Utilisateur utilisateur = utilisateurRepository.findById(id)
+        User user = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Profil non trouvé: " + id));
 
-        utilisateur.setRole(role);
-        Utilisateur updated = utilisateurRepository.save(utilisateur);
+        user.setRole(role);
+        User updated = userRepository.save(user);
 
         log.info("Rôle assigné avec succès");
         return adminMapper.toProfilAdminDTO(updated);
@@ -272,10 +272,10 @@ public class AdminService {
     public ProfilAdminDTO retirerRole(Long id, String role) {
         log.info("Retrait du rôle {} au profil: {}", role, id);
         
-        Utilisateur utilisateur = utilisateurRepository.findById(id)
+        User user = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Profil non trouvé: " + id));
 
-        Utilisateur updated = utilisateurRepository.save(utilisateur);
+        User updated = userRepository.save(user);
         
         log.info("Rôle retiré avec succès");
         return adminMapper.toProfilAdminDTO(updated);
@@ -322,12 +322,12 @@ public class AdminService {
     public StatistiquesGlobalesDTO obtenirStatistiques() {
         log.info("Calcul des statistiques globales");
         
-        Long total = utilisateurRepository.count();
-        Long actifs = utilisateurRepository.countByStatut("Actif");
-        Long suspendus = utilisateurRepository.countByStatut("Suspendu");
-        Long enAttente = utilisateurRepository.countByStatut("En attente");
-        Double scoreMoyen = utilisateurRepository.getScoreConfiantMoyen();
-        Long signalements = utilisateurRepository.countSignalements();
+        Long total = userRepository.count();
+        Long actifs = userRepository.countByStatut("Actif");
+        Long suspendus = userRepository.countByStatut("Suspendu");
+        Long enAttente = userRepository.countByStatut("En attente");
+        Double scoreMoyen = userRepository.getScoreConfiantMoyen();
+        Long signalements = userRepository.countSignalements();
 
         return StatistiquesGlobalesDTO.builder()
             .totalProfils(total.intValue())
@@ -357,19 +357,19 @@ public class AdminService {
     public ProfilExportDTO exporterProfil(Long id) {
         log.info("Export du profil: {}", id);
         
-        Utilisateur utilisateur = utilisateurRepository.findById(id)
+        User user = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Profil non trouvé: " + id));
 
-        List<ActionModeration> actions = actionModerationRepository.findByUtilisateur(utilisateur);
+        List<ActionModeration> actions = actionModerationRepository.findByUser(user);
 
         return ProfilExportDTO.builder()
-            .id(utilisateur.getId())
-            .nom(utilisateur.getNom())
-            .email(utilisateur.getEmail())
-            .telephone(utilisateur.getTelephone())
-            .role(utilisateur.getRole())
-            .statut(utilisateur.getStatut())
-            .dateInscription(utilisateur.getDateInscription())
+            .id(user.getId())
+            .nom(user.getNom())
+            .email(user.getEmail())
+            .telephone(user.getTelephone())
+            .role(user.getRole())
+            .statut(user.getStatut())
+            .dateInscription(user.getDateInscription())
             .historique(actions.stream()
                 .map(adminMapper::toActionModerationDTO)
                 .collect(Collectors.toList()))

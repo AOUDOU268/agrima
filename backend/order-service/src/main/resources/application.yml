@@ -5,16 +5,19 @@ spring:
   application:
     name: order-service
   datasource:
-    url: jdbc:h2:mem:order_service_db;DB_CLOSE_DELAY=-1
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:postgresql://localhost:5432/order_db
+    username: postgres
+    password: 268368As#
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
   cloud:
     stream:
       enabled: false
 eureka:
   client:
-    enabled: false
+    enabled: true
