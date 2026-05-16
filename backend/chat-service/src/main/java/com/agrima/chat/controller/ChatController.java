@@ -26,18 +26,13 @@ public class ChatController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/conversations/consumer/{consumerId}")
-    public ResponseEntity<List<ConversationResponseDto>> getConversationsByConsumer(@PathVariable Long consumerId) {
-        return ResponseEntity.ok(chatService.getConversationsByConsumer(consumerId));
-    }
-
-    @GetMapping("/conversations/producer/{producerId}")
-    public ResponseEntity<List<ConversationResponseDto>> getConversationsByProducer(@PathVariable Long producerId) {
-        return ResponseEntity.ok(chatService.getConversationsByProducer(producerId));
+    @GetMapping("/conversations/user/{userId}")
+    public ResponseEntity<List<ConversationResponseDto>> getConversationsByUser(@PathVariable("userId") Long userId) {
+        return ResponseEntity.ok(chatService.getConversationsByUser(userId));
     }
 
     @GetMapping("/conversations/{id}")
-    public ResponseEntity<ConversationResponseDto> getConversationById(@PathVariable Long id) {
+    public ResponseEntity<ConversationResponseDto> getConversationById(@PathVariable("id") Long id) {
         return chatService.getConversationById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -50,7 +45,7 @@ public class ChatController {
     }
 
     @GetMapping("/conversations/{conversationId}/messages")
-    public ResponseEntity<List<MessageResponseDto>> getMessagesForConversation(@PathVariable Long conversationId) {
+    public ResponseEntity<List<MessageResponseDto>> getMessagesForConversation(@PathVariable("conversationId") Long conversationId) {
         return ResponseEntity.ok(chatService.getMessagesForConversation(conversationId));
     }
 }

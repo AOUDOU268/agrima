@@ -17,8 +17,8 @@ public class ChatMapper {
 
     public static Conversation toConversation(ConversationRequestDto dto) {
         Conversation conversation = new Conversation();
-        conversation.setConsumerId(dto.getConsumerId());
-        conversation.setProducerId(dto.getProducerId());
+        conversation.setParticipant1Id(dto.getParticipant1Id());
+        conversation.setParticipant2Id(dto.getParticipant2Id());
         conversation.setSujet(dto.getSujet());
         conversation.setCreatedAt(LocalDateTime.now());
         return conversation;
@@ -27,8 +27,8 @@ public class ChatMapper {
     public static ConversationResponseDto toConversationResponse(Conversation conversation) {
         ConversationResponseDto dto = new ConversationResponseDto();
         dto.setId(conversation.getId());
-        dto.setConsumerId(conversation.getConsumerId());
-        dto.setProducerId(conversation.getProducerId());
+        dto.setParticipant1Id(conversation.getParticipant1Id());
+        dto.setParticipant2Id(conversation.getParticipant2Id());
         dto.setSujet(conversation.getSujet());
         dto.setCreatedAt(conversation.getCreatedAt());
         return dto;
