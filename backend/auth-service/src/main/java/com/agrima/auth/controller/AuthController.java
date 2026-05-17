@@ -55,7 +55,7 @@ public class AuthController {
         user.setPasswordHash(encoder.encode(request.password()));
         user.setDateInscription(LocalDateTime.now());
         user.setActif(true);
-        user.getRoles().add(Role.CONSOMMATEUR);
+        user.getRoles().add(Role.ROLE_CONSOMMATEUR);
         repository.save(user);
 
         return ResponseEntity.ok(Map.of("message", "User registered successfully"));
