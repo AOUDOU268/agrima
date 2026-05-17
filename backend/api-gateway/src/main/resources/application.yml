@@ -32,7 +32,7 @@ spring:
           predicates:
             - Path=/api/deliveries/**
         - id: notification-service
-          uri: http://127.0.0.1:8087
+          uri: http://127.0.0.1:8088
           predicates:
             - Path=/api/notifications/**
         - id: chat-service
