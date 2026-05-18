@@ -75,7 +75,7 @@ import { Produit, Avis } from '../../models/index';
 
             <!-- Actions -->
             <div class="flex gap-4 mb-6">
-              <button (click)="ajouterAuPanier()" class="flex-1 bg-alibaba-red text-white py-3 rounded font-bold text-lg hover:bg-red-700">
+              <button (click)="ajouterAuPanier()" class="w-full bg-gray-900 text-white py-3.5 rounded-2xl font-bold text-xs hover:bg-[#008a5d] transition-all transform active:scale-95 shadow-lg">
                 <img width="24" height="24" src="assets/icones/panier.webp" alt="panier" class="inline-block align-middle mr-1"/> Ajouter au panier
               </button>
               <button (click)="basculerFavori()" class="flex-1 border-2 py-3 rounded font-bold hover:bg-red-50"
@@ -183,7 +183,7 @@ export class DetailProduitComponent implements OnInit {
     private favorisService: FavorisService,
     private route: ActivatedRoute,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {

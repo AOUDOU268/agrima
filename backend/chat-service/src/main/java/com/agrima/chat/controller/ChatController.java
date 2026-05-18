@@ -48,4 +48,26 @@ public class ChatController {
     public ResponseEntity<List<MessageResponseDto>> getMessagesForConversation(@PathVariable("conversationId") Long conversationId) {
         return ResponseEntity.ok(chatService.getMessagesForConversation(conversationId));
     }
+
+    @PutMapping("/conversations/{id}")
+    public ResponseEntity<ConversationResponseDto> updateConversation(@PathVariable("id") Long id, @RequestBody ConversationRequestDto request) {
+        return ResponseEntity.ok(chatService.updateConversation(id, request));
+    }
+
+    @DeleteMapping("/conversations/{id}")
+    public ResponseEntity<Void> deleteConversation(@PathVariable("id") Long id) {
+        chatService.deleteConversation(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/messages/{id}")
+    public ResponseEntity<MessageResponseDto> updateMessage(@PathVariable("id") Long id, @RequestBody MessageRequestDto request) {
+        return ResponseEntity.ok(chatService.updateMessage(id, request));
+    }
+
+    @DeleteMapping("/messages/{id}")
+    public ResponseEntity<Void> deleteMessage(@PathVariable("id") Long id) {
+        chatService.deleteMessage(id);
+        return ResponseEntity.noContent().build();
+    }
 }

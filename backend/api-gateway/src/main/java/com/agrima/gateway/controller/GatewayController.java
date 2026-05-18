@@ -46,7 +46,7 @@ public class GatewayController {
 
     @RequestMapping(value = {"/api/chat", "/api/chat/**"}, method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
     public Mono<ResponseEntity<byte[]>> proxyChat(ServerHttpRequest request, @RequestBody(required = false) byte[] body) {
-        return proxy("http://127.0.0.1:8088", request, body);
+        return proxy("http://127.0.0.1:8092", request, body);
     }
 
     @RequestMapping(value = {"/api/auth", "/api/auth/**"}, method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})

@@ -27,9 +27,11 @@ public class OrderMapper {
         entity.setDateCommande(dto.getDateCommande());
         entity.setDateLivraisonEstimee(dto.getDateLivraisonEstimee());
         if (dto.getLignes() != null) {
-            entity.setLignes(dto.getLignes().stream()
+            List<LineItem> lines = dto.getLignes().stream()
                 .map(this::toLineItemEntity)
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
+            lines.forEach(line -> line.setOrder(entity));
+            entity.setLignes(lines);
         }
         return entity;
     }
