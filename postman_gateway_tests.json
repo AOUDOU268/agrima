@@ -1,0 +1,412 @@
+{
+	"info": {
+		"_postman_id": "agrima-gateway-integration-tests",
+		"name": "AGRIMA - Tests d'Intégration via Gateway",
+		"description": "Collection de tests pour les services Order, Chat et Notification à travers l'API Gateway.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Order Service",
+			"item": [
+				{
+					"name": "List Orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway_url}}/api/orders",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"api",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Order by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway_url}}/api/orders/1",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"api",
+								"orders",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"numero\": \"ORD-2023-001\",\n  \"clientId\": 1,\n  \"producteurId\": 2,\n  \"adresseLivraison\": \"123 Rue de la Ferme, Ville\",\n  \"modeLivraison\": \"DOMICILE\",\n  \"montantTotal\": 150.50,\n  \"fraisLivraison\": 10.00,\n  \"lignes\": [\n    {\n      \"productId\": 101,\n      \"quantite\": 5,\n      \"prixUnitaire\": 20.10\n    },\n    {\n      \"productId\": 102,\n      \"quantite\": 2,\n      \"prixUnitaire\": 25.00\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{gateway_url}}/api/orders",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"api",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Order",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"numero\": \"ORD-2023-001-UPD\",\n  \"clientId\": 1,\n  \"producteurId\": 2,\n  \"adresseLivraison\": \"456 Nouvelle Adresse, Ville\",\n  \"modeLivraison\": \"POINT_RELAIS\",\n  \"montantTotal\": 160.00,\n  \"fraisLivraison\": 5.00\n}"
+						},
+						"url": {
+							"raw": "{{gateway_url}}/api/orders/1",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"api",
+								"orders",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Order",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{gateway_url}}/api/orders/1",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"api",
+								"orders",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Chat Service",
+			"item": [
+				{
+					"name": "Create Conversation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"participant1Id\": 1,\n  \"participant2Id\": 2,\n  \"sujet\": \"Commande de tomates\"\n}"
+						},
+						"url": {
+							"raw": "{{gateway_url}}/api/chat/conversations",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"api",
+								"chat",
+								"conversations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Conversations by User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway_url}}/api/chat/conversations/user/1",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"api",
+								"chat",
+								"conversations",
+								"user",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Conversation by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway_url}}/api/chat/conversations/1",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"api",
+								"chat",
+								"conversations",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send Message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"conversationId\": 1,\n  \"senderId\": 1,\n  \"body\": \"Bonjour, est-ce que les tomates sont bio ?\"\n}"
+						},
+						"url": {
+							"raw": "{{gateway_url}}/api/chat/messages",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"api",
+								"chat",
+								"messages"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Messages for Conversation",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway_url}}/api/chat/conversations/1/messages",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"api",
+								"chat",
+								"conversations",
+								"1",
+								"messages"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Notification Service",
+			"item": [
+				{
+					"name": "List All Notifications",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway_url}}/api/notifications",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"api",
+								"notifications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Notifications by User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway_url}}/api/notifications/user/1",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"api",
+								"notifications",
+								"user",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Notification by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway_url}}/api/notifications/1",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"api",
+								"notifications",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Notification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": 1,\n  \"type\": \"INFO\",\n  \"titre\": \"Nouvelle commande\",\n  \"message\": \"Votre commande a été reçue avec succès.\",\n  \"relatedEntityId\": 10,\n  \"relatedEntityType\": \"ORDER\"\n}"
+						},
+						"url": {
+							"raw": "{{gateway_url}}/api/notifications",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"api",
+								"notifications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Notification",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": 1,\n  \"type\": \"ALERTE\",\n  \"titre\": \"Mise à jour statut\",\n  \"message\": \"Le statut de votre commande a changé.\",\n  \"relatedEntityId\": 10,\n  \"relatedEntityType\": \"ORDER\"\n}"
+						},
+						"url": {
+							"raw": "{{gateway_url}}/api/notifications/1",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"api",
+								"notifications",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Notification",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{gateway_url}}/api/notifications/1",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"api",
+								"notifications",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "gateway_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}
