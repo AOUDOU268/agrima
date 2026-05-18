@@ -161,10 +161,10 @@ import { Commande } from '../../models';
               </div>
 
               <div class="flex flex-col gap-3">
-                <button class="w-full border-2 border-alibaba-red text-alibaba-red px-6 py-3 rounded-lg font-semibold hover:bg-alibaba-red hover:text-white transition-colors">
+                <button class="w-full border-2 border-alibaba-red text-alibaba-red px-6 py-3 rounded-2xl font-semibold hover:bg-alibaba-red hover:text-white transition-colors">
                   Contacter le support
                 </button>
-                <button class="w-full border-2 border-alibaba-red text-alibaba-red px-6 py-3 rounded-lg font-semibold hover:bg-alibaba-red hover:text-white transition-colors">
+                <button class="w-full border-2 border-alibaba-red text-alibaba-red px-6 py-3 rounded-2xl font-semibold hover:bg-alibaba-red hover:text-white transition-colors">
                   Relancer la livraison
                 </button>
               </div>
@@ -228,7 +228,7 @@ export class SuiviCommandeComponent implements OnInit, OnDestroy, AfterViewInit 
     { nom: 'Livrée', date: new Date(Date.now() + 432000000), description: 'Remise au destinataire' }
   ];
 
-  constructor(private commandeService: CommandeService) {}
+  constructor(private commandeService: CommandeService) { }
 
   ngOnInit(): void {
     this.chargerDernieresCommandes();
@@ -289,7 +289,7 @@ export class SuiviCommandeComponent implements OnInit, OnDestroy, AfterViewInit 
 
   onRechercher(): void {
     if (!this.numeroCommande.trim()) return;
-    
+
     this.commandeService.getCommandes().subscribe({
       next: (commandes: any) => {
         const trouve = commandes.find((c: any) => c.numero === this.numeroCommande);
@@ -322,7 +322,7 @@ export class SuiviCommandeComponent implements OnInit, OnDestroy, AfterViewInit 
     // Simulation du mouvement du livreur toutes les 3 secondes
     this.intervalId = setInterval(() => {
       if (this.commandeSelectionnee &&
-          (this.commandeSelectionnee.statut === 'Expédiée' || this.commandeSelectionnee.statut === 'Livrée')) {
+        (this.commandeSelectionnee.statut === 'Expédiée' || this.commandeSelectionnee.statut === 'Livrée')) {
         this.simulerMouvementLivreur();
       }
     }, 3000);

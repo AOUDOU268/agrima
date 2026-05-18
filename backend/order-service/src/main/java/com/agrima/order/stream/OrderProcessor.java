@@ -25,16 +25,16 @@ public class OrderProcessor {
         streamBridge.send("orderPlaced-out-0", event);
     }
 
-    @Bean
-    public Consumer<Message<PaymentConfirmedEvent>> paymentConfirmed() {
-        return message -> {
-            PaymentConfirmedEvent event = message.getPayload();
-            // Update order status to PAID
-            orderRepository.findById(event.getOrderId()).ifPresent(order -> {
-                order.setStatut("PAID");
-                orderRepository.save(order);
-                System.out.println("Order " + event.getOrderId() + " status updated to PAID");
-            });
-        };
-    }
+//    @Bean
+//    public Consumer<Message<PaymentConfirmedEvent>> paymentConfirmed() {
+//        return message -> {
+//            PaymentConfirmedEvent event = message.getPayload();
+//            // Update order status to PAID
+//            orderRepository.findById(event.getOrderId()).ifPresent(order -> {
+//                order.setStatut("PAID");
+//                orderRepository.save(order);
+//                System.out.println("Order " + event.getOrderId() + " status updated to PAID");
+//            });
+//        };
+//    }
 }

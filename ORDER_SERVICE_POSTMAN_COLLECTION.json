@@ -1,0 +1,144 @@
+{
+  "info": {
+    "_postman_id": "order-service-gateway-tests",
+    "name": "Order Service API Gateway Tests",
+    "description": "Collection de tests complets pour le service Order via la Gateway API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. GET - List All Orders",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://127.0.0.1:8080/api/orders",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "8080",
+          "path": ["api", "orders"]
+        },
+        "description": "Récupère la liste de toutes les commandes"
+      },
+      "response": []
+    },
+    {
+      "name": "2. POST - Create New Order",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"numero\": \"ORD-2025-NEW\",\n  \"clientId\": 1,\n  \"producteurId\": 1,\n  \"adresseLivraison\": \"123 Rue de Paris, Paris\",\n  \"modeLivraison\": \"Standard\",\n  \"montantTotal\": 150.50,\n  \"fraisLivraison\": 10.00,\n  \"dateCommande\": \"2026-05-17T21:52:33\",\n  \"dateLivraisonEstimee\": \"2026-05-20T21:52:34\",\n  \"lignes\": []\n}"
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8080/api/orders",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "8080",
+          "path": ["api", "orders"]
+        },
+        "description": "Crée une nouvelle commande"
+      },
+      "response": []
+    },
+    {
+      "name": "3. GET - Get Order By ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://127.0.0.1:8080/api/orders/1",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "8080",
+          "path": ["api", "orders", "1"]
+        },
+        "description": "Récupère une commande spécifique par ID (⚠️ ERREUR 500 ACTUELLEMENT)"
+      },
+      "response": []
+    },
+    {
+      "name": "4. PUT - Update Order",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"numero\": \"ORD-2025-UPDATE\",\n  \"clientId\": 1,\n  \"producteurId\": 1,\n  \"adresseLivraison\": \"456 Avenue des Champs, Lyon\",\n  \"modeLivraison\": \"Express\",\n  \"montantTotal\": 200.00,\n  \"fraisLivraison\": 15.00,\n  \"dateCommande\": \"2026-05-17T21:52:33\",\n  \"dateLivraisonEstimee\": \"2026-05-18T21:52:34\",\n  \"lignes\": []\n}"
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8080/api/orders/1",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "8080",
+          "path": ["api", "orders", "1"]
+        },
+        "description": "Met à jour une commande existante (⚠️ ERREUR 500 ACTUELLEMENT)"
+      },
+      "response": []
+    },
+    {
+      "name": "5. DELETE - Delete Order",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://127.0.0.1:8080/api/orders/1",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "8080",
+          "path": ["api", "orders", "1"]
+        },
+        "description": "Supprime une commande (⚠️ ERREUR 500 ACTUELLEMENT)"
+      },
+      "response": []
+    },
+    {
+      "name": "6. GET - Invalid Order ID (999999)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://127.0.0.1:8080/api/orders/999999",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "8080",
+          "path": ["api", "orders", "999999"]
+        },
+        "description": "Test d'un ID invalide - Devrait retourner 404"
+      },
+      "response": []
+    }
+  ]
+}

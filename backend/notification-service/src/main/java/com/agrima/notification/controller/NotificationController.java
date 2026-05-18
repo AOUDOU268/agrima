@@ -31,14 +31,14 @@ public class NotificationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<NotificationResponseDto> get(@PathVariable Long id) {
+    public ResponseEntity<NotificationResponseDto> get(@PathVariable("id") Long id) {
         return repository.findById(id)
                 .map(notification -> ResponseEntity.ok(mapper.toResponseDto(notification)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/user/{userId}")
-    public List<NotificationResponseDto> listByUser(@PathVariable Long userId) {
+    public List<NotificationResponseDto> listByUser(@PathVariable("userId") Long userId) {
         return repository.findByUserId(userId).stream()
                 .map(mapper::toResponseDto)
                 .collect(Collectors.toList());
@@ -52,7 +52,7 @@ public class NotificationController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<NotificationResponseDto> update(@PathVariable Long id, @RequestBody NotificationRequestDto notificationDto) {
+    public ResponseEntity<NotificationResponseDto> update(@PathVariable("id") Long id, @RequestBody NotificationRequestDto notificationDto) {
         return repository.findById(id)
                 .map(existing -> {
                     existing.setUserId(notificationDto.getUserId());
@@ -70,7 +70,7 @@ public class NotificationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }

@@ -99,11 +99,11 @@ import { Article } from '../../models/index';
             <!-- Boutons -->
             <button [routerLink]="['/commande']" 
                     [queryParams]="{ panier: true }"
-                    class="w-full bg-alibaba-red text-white py-3 rounded font-bold mb-2 hover:bg-red-700">
+                    class="w-full bg-gray-900 text-white py-3.5 rounded-2xl font-bold hover:bg-[#008a5d] transition-all transform active:scale-95 shadow-lg">
               Passer la commande
             </button>
-            <button class="w-full border-2 border-alibaba-red text-alibaba-red py-3 rounded font-bold hover:bg-red-50">
-              Continuer vos achats
+            <button class="w-full border-2 border-red text-red py-2 mt-3 rounded-2xl font-bold hover:bg-red-50">
+              ← Continuer vos achats
             </button>
           </div>
         </div>
@@ -118,7 +118,7 @@ export class PanierComponent implements OnInit {
   taxes = 0;
   total = 0;
 
-  constructor(private panierService: PanierService) {}
+  constructor(private panierService: PanierService) { }
 
   ngOnInit(): void {
     this.panierService.articles$.subscribe(articles => {

@@ -182,10 +182,10 @@ import { Commande, Article } from '../../models/index';
             <!-- Boutons -->
             <button (click)="passerCommande()" 
                     [disabled]="!acceptConditions"
-                    class="w-full bg-alibaba-red text-white py-3 rounded font-bold mb-2 hover:bg-red-700 disabled:bg-gray-400">
+                    class="w-full bg-gray-900 text-white py-2 rounded-2xl font-bold hover:bg-[#008a5d] transition-all transform active:scale-95 shadow-lg">
               <img width="24" height="24" src="assets/icones/succes.webp" alt="ok" class="inline-block align-middle mr-1"/> Passer la Commande
             </button>
-            <button (click)="retourPanier()" class="w-full border-2 border-alibaba-red text-alibaba-red py-3 rounded font-bold hover:bg-red-50">
+            <button (click)="retourPanier()" class="w-full border-2 border-red text-red mt-3 py-3 rounded-2xl font-bold hover:bg-red-50">
               ← Retour au panier
             </button>
 

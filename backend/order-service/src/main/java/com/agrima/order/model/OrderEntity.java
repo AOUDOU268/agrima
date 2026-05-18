@@ -25,7 +25,7 @@ public class OrderEntity {
     private Long paiementId;
     private Long livraisonId;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<LineItem> lignes = new ArrayList<>();
 
     public OrderEntity() {

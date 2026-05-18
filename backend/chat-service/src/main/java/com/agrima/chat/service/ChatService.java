@@ -70,4 +70,38 @@ public class ChatService {
                 .map(ChatMapper::toMessageResponse)
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public ConversationResponseDto updateConversation(Long id, ConversationRequestDto request) {
+        Conversation conversation = conversationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Conversation not found"));
+        conversation.setSujet(request.getSujet());
+        Conversation saved = conversationRepository.save(conversation);
+        return ChatMapper.toConversationResponse(saved);
+    }
+
+    @Transactional
+    public void deleteConversation(Long id) {
+        if (!conversationRepository.existsById(id)) {
+            throw new IllegalArgumentException("Conversation not found");
+        }
+        conversationRepository.deleteById(id);
+    }
+
+    @Transactional
+    public MessageResponseDto updateMessage(Long id, MessageRequestDto request) {
+        Message message = messageRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Message not found"));
+        message.setContent(request.getBody());
+        Message saved = messageRepository.save(message);
+        return ChatMapper.toMessageResponse(saved);
+    }
+
+    @Transactional
+    public void deleteMessage(Long id) {
+        if (!messageRepository.existsById(id)) {
+            throw new IllegalArgumentException("Message not found");
+        }
+        messageRepository.deleteById(id);
+    }
 }
