@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, BehaviorSubject, of } from 'rxjs';
+import { map, delay } from 'rxjs/operators';
 
 export interface ProfilAdmin {
   id: number;
   nom: string;
   email: string;
   telephone: string;
-  role: 'ROLE_CONSOMMATEUR' | 'ROLE_PRODUCTEUR' | 'ROLE_LIVREUR';
+  role: 'ROLE_CONSOMMATEUR' | 'ROLE_PRODUCTEUR' | 'ROLE_LIVREUR' | 'ROLE_MODERATEUR';
   statut: 'Actif' | 'En attente' | 'Suspendu';
   localisation: string;
   dateInscription: string;
@@ -56,7 +55,6 @@ export interface RapportModeration {
   providedIn: 'root'
 })
 export class AdminService {
-  private apiUrl = '/api/admin';
   private profilsSubject = new BehaviorSubject<ProfilAdmin[]>([]);
   public profils$ = this.profilsSubject.asObservable();
 
@@ -66,265 +64,281 @@ export class AdminService {
   private actionsSubject = new BehaviorSubject<ActionModeration[]>([]);
   public actions$ = this.actionsSubject.asObservable();
 
-  constructor(private http: HttpClient) {
-    this.chargerProfils();
+  private mockProfils: ProfilAdmin[] = [
+    {
+      id: 1,
+      nom: 'Aline Mvondo',
+      email: 'aline.mvondo@agrima.cm',
+      telephone: '+237 690 110 112',
+      role: 'ROLE_CONSOMMATEUR',
+      statut: 'Actif',
+      localisation: 'Yaoundé',
+      dateInscription: '12 mars 2026',
+      derniereActivite: 'Il y a 8 min',
+      scoreConfiance: 94,
+      nbSignalements: 0,
+      note: 4.8,
+      portefeuille: 'Wallet Premium',
+      tags: ['client fidèle', 'paiement validé']
+    },
+    {
+      id: 2,
+      nom: 'Ferme Horizon Verte',
+      email: 'contact@horizonverte.cm',
+      telephone: '+237 677 540 887',
+      role: 'ROLE_PRODUCTEUR',
+      statut: 'En attente',
+      localisation: 'Bafoussam',
+      dateInscription: '04 avril 2026',
+      derniereActivite: 'Il y a 37 min',
+      scoreConfiance: 71,
+      nbSignalements: 1,
+      note: 4.3,
+      portefeuille: 'Compte producteur',
+      tags: ['documents à vérifier', 'bio'],
+      siret: '12345678901234',
+      nomExploitation: 'Horizon Verte SARL'
+    },
+    {
+      id: 3,
+      nom: 'Samuel Ndzi',
+      email: 'samuel.ndzi@agrima.cm',
+      telephone: '+237 699 420 921',
+      role: 'ROLE_LIVREUR',
+      statut: 'Actif',
+      localisation: 'Douala',
+      dateInscription: '27 février 2026',
+      derniereActivite: 'En tournée',
+      scoreConfiance: 88,
+      nbSignalements: 0,
+      note: 4.6,
+      portefeuille: 'Livreur Express',
+      tags: ['zone urbaine', 'scan QR'],
+      vehicule: 'Suzuki Carry',
+      plaqueImmatriculation: 'CM-ND-2024'
+    },
+    {
+      id: 4,
+      nom: 'Nadine Tchana',
+      email: 'nadine.tchana@agrima.cm',
+      telephone: '+237 651 332 870',
+      role: 'ROLE_MODERATEUR',
+      statut: 'Actif',
+      localisation: 'Yaoundé',
+      dateInscription: '15 janvier 2026',
+      derniereActivite: 'Il y a 1 h',
+      scoreConfiance: 96,
+      nbSignalements: 0,
+      note: 4.9,
+      portefeuille: 'Staff back-office',
+      tags: ['contenu', 'litiges']
+    },
+    {
+      id: 5,
+      nom: 'Marché Solidaire Mbouda',
+      email: 'marchesolidaire@agrima.cm',
+      telephone: '+237 681 992 120',
+      role: 'ROLE_PRODUCTEUR',
+      statut: 'Suspendu',
+      localisation: 'Mbouda',
+      dateInscription: '08 décembre 2025',
+      derniereActivite: 'Suspendu depuis 2 jours',
+      scoreConfiance: 42,
+      nbSignalements: 5,
+      note: 2.9,
+      portefeuille: 'Compte vérification',
+      tags: ['litige actif', 'stock incohérent']
+    },
+    {
+      id: 6,
+      nom: 'Brice Nkou',
+      email: 'brice.nkou@agrima.cm',
+      telephone: '+237 672 301 990',
+      role: 'ROLE_CONSOMMATEUR',
+      statut: 'En attente',
+      localisation: 'Kribi',
+      dateInscription: '18 avril 2026',
+      derniereActivite: 'Nouveau compte',
+      scoreConfiance: 63,
+      nbSignalements: 0,
+      note: 0,
+      portefeuille: 'Wallet standard',
+      tags: ['KYC incomplet']
+    }
+  ];
+
+  constructor() {
+    this.profilsSubject.next([...this.mockProfils]);
   }
 
   // ========== GESTION DES PROFILS ==========
 
-  /**
-   * Charge tous les profils depuis l'API
-   */
   chargerProfils(): void {
-    this.http.get<ProfilAdmin[]>(`${this.apiUrl}/profils`).subscribe({
-      next: (profils) => this.profilsSubject.next(profils),
-      error: (error) => console.error('Erreur lors du chargement des profils', error)
-    });
+    this.profilsSubject.next([...this.mockProfils]);
   }
 
-  /**
-   * Récupère un profil spécifique
-   */
   obtenirProfil(id: number): Observable<ProfilAdmin> {
-    return this.http.get<ProfilAdmin>(`${this.apiUrl}/profils/${id}`);
+    const profil = this.mockProfils.find(p => p.id === id);
+    return of(profil!).pipe(delay(300));
   }
 
-  /**
-   * Récupère les profils avec filtrage
-   */
   obtenirProfilsFiltres(role?: string, statut?: string): Observable<ProfilAdmin[]> {
-    let url = `${this.apiUrl}/profils`;
-    const params = new URLSearchParams();
-    if (role) params.append('role', role);
-    if (statut) params.append('statut', statut);
-    if (params.toString()) {
-      url += `?${params.toString()}`;
+    let result = [...this.mockProfils];
+    if (role && role !== 'TOUS') {
+      result = result.filter(p => p.role === role);
     }
-    return this.http.get<ProfilAdmin[]>(url);
+    if (statut && statut !== 'TOUS') {
+      result = result.filter(p => p.statut === statut);
+    }
+    return of(result).pipe(delay(300));
   }
 
-  /**
-   * Récupère les profils urgents (signalements ou statut particulier)
-   */
   obtenirProfilsUrgents(): Observable<ProfilAdmin[]> {
-    return this.http.get<ProfilAdmin[]>(`${this.apiUrl}/profils/urgents`);
+    const result = this.mockProfils.filter(p => p.nbSignalements > 0 || p.statut !== 'Actif');
+    return of(result).pipe(delay(300));
   }
 
-  /**
-   * Sélectionne un profil pour affichage
-   */
   selectionnerProfil(profil: ProfilAdmin): void {
     this.profilSelectionneSubject.next(profil);
   }
 
-  /**
-   * Récupère les détails d'un consommateur
-   */
   obtenirConsommateur(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/consommateurs/${id}`);
+    return of({ id, details: 'Détails consommateur mock' }).pipe(delay(300));
   }
 
-  /**
-   * Récupère les détails d'un producteur
-   */
   obtenirProducteur(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/producteurs/${id}`);
+    return of({ id, details: 'Détails producteur mock' }).pipe(delay(300));
   }
 
-  /**
-   * Récupère les détails d'un livreur
-   */
   obtenirLivreur(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/livreurs/${id}`);
+    return of({ id, details: 'Détails livreur mock' }).pipe(delay(300));
   }
 
-  /**
-   * Met à jour un profil
-   */
   mettreAJourProfil(id: number, donnees: Partial<ProfilAdmin>): Observable<ProfilAdmin> {
-    return this.http.put<ProfilAdmin>(`${this.apiUrl}/profils/${id}`, donnees).pipe(
-      map((profil) => {
-        this.chargerProfils();
-        return profil;
-      })
-    );
+    const index = this.mockProfils.findIndex(p => p.id === id);
+    if (index !== -1) {
+      this.mockProfils[index] = { ...this.mockProfils[index], ...donnees };
+      this.chargerProfils();
+      return of(this.mockProfils[index]).pipe(delay(300));
+    }
+    throw new Error('Profil non trouvé');
   }
 
-  /**
-   * Supprime un profil
-   */
   supprimerProfil(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/profils/${id}`).pipe(
-      map(() => {
-        this.chargerProfils();
-      })
-    );
+    this.mockProfils = this.mockProfils.filter(p => p.id !== id);
+    this.chargerProfils();
+    return of(undefined).pipe(delay(300));
   }
 
   // ========== ACTIONS DE MODERATION ==========
 
-  /**
-   * Valide un profil
-   */
   validerProfil(id: number, raison: string): Observable<ProfilAdmin> {
-    return this.http.post<ProfilAdmin>(`${this.apiUrl}/profils/${id}/valider`, { raison }).pipe(
-      map((profil) => {
-        this.chargerProfils();
-        return profil;
-      })
-    );
+    return this.mettreAJourProfil(id, { statut: 'Actif' });
   }
 
-  /**
-   * Suspend temporairement un profil
-   */
   suspendreTemporairement(id: number, duree: number, raison: string): Observable<ProfilAdmin> {
-    return this.http.post<ProfilAdmin>(`${this.apiUrl}/profils/${id}/suspendre-temp`, {
-      duree,
-      raison
-    }).pipe(
-      map((profil) => {
-        this.chargerProfils();
-        return profil;
-      })
-    );
+    return this.mettreAJourProfil(id, { statut: 'Suspendu' });
   }
 
-  /**
-   * Réactive un profil
-   */
   reactiverProfil(id: number): Observable<ProfilAdmin> {
-    return this.http.post<ProfilAdmin>(`${this.apiUrl}/profils/${id}/reactiver`, {}).pipe(
-      map((profil) => {
-        this.chargerProfils();
-        return profil;
-      })
-    );
+    return this.mettreAJourProfil(id, { statut: 'Actif' });
   }
 
-  /**
-   * Ajoute un avertissement
-   */
   ajouterAvertissement(id: number, raison: string, details: string): Observable<ActionModeration> {
-    return this.http.post<ActionModeration>(`${this.apiUrl}/profils/${id}/avertir`, {
-      raison,
-      details
-    });
+    const action: ActionModeration = {
+      id: Math.floor(Math.random() * 1000),
+      profilId: id,
+      type: 'AVERTISSEMENT',
+      description: details,
+      raison: raison,
+      dateAction: new Date().toISOString(),
+      statut: 'EFFECTUEE'
+    };
+    return of(action).pipe(delay(300));
   }
 
-  /**
-   * Bloque définitivement un profil
-   */
   bloquerProfil(id: number, raison: string): Observable<ProfilAdmin> {
-    return this.http.post<ProfilAdmin>(`${this.apiUrl}/profils/${id}/bloquer`, { raison }).pipe(
-      map((profil) => {
-        this.chargerProfils();
-        return profil;
-      })
-    );
+    return this.mettreAJourProfil(id, { statut: 'Suspendu' });
   }
 
-  /**
-   * Envoie un message au profil
-   */
   envoyerMessage(id: number, sujet: string, contenu: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/profils/${id}/message`, {
-      sujet,
-      contenu
-    });
+    return of({ success: true }).pipe(delay(300));
   }
 
   // ========== GESTION DES ROLES ==========
 
-  /**
-   * Assigne un rôle à un utilisateur
-   */
-  assignerRole(userId: number, nouveauRole: string): Observable<ProfilAdmin> {
-    return this.http.post<ProfilAdmin>(`${this.apiUrl}/utilisateurs/${userId}/role`, {
-      role: nouveauRole
-    }).pipe(
-      map((profil) => {
-        this.chargerProfils();
-        return profil;
-      })
-    );
+  assignerRole(userId: number, nouveauRole: any): Observable<ProfilAdmin> {
+    return this.mettreAJourProfil(userId, { role: nouveauRole });
   }
 
-  /**
-   * Retire un rôle à un utilisateur
-   */
   retirerRole(userId: number, role: string): Observable<ProfilAdmin> {
-    return this.http.delete<ProfilAdmin>(`${this.apiUrl}/utilisateurs/${userId}/role/${role}`).pipe(
-      map((profil) => {
-        this.chargerProfils();
-        return profil;
-      })
-    );
+    // Dans ce mock, on change juste le rôle par défaut
+    return this.mettreAJourProfil(userId, { role: 'ROLE_CONSOMMATEUR' });
   }
 
   // ========== ANALYTICS ET RAPPORTS ==========
 
-  /**
-   * Génère un rapport de modération
-   */
   genererRapportModeration(dateDebut: string, dateFin: string): Observable<RapportModeration> {
-    return this.http.get<RapportModeration>(`${this.apiUrl}/rapports/moderation`, {
-      params: {
-        dateDebut,
-        dateFin
-      }
-    });
+    const rapport: RapportModeration = {
+      dateDebut,
+      dateFin,
+      totalProfils: this.mockProfils.length,
+      actifs: this.mockProfils.filter(p => p.statut === 'Actif').length,
+      suspendus: this.mockProfils.filter(p => p.statut === 'Suspendu').length,
+      enAttente: this.mockProfils.filter(p => p.statut === 'En attente').length,
+      scoreConfiantMoyen: 78,
+      signalementsTotaux: 12,
+      actionsEffectuees: 5
+    };
+    return of(rapport).pipe(delay(300));
   }
 
-  /**
-   * Récupère les statistiques globales
-   */
   obtenirStatistiques(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/statistiques`);
+    return of({
+      profilsParRole: {
+        ROLE_CONSOMMATEUR: 25,
+        ROLE_PRODUCTEUR: 15,
+        ROLE_LIVREUR: 10
+      },
+      evolutionProfils: [5, 8, 12, 15, 20]
+    }).pipe(delay(300));
   }
 
-  /**
-   * Récupère l'historique des actions d'un profil
-   */
   obtenirHistoriqueActions(profilId: number): Observable<ActionModeration[]> {
-    return this.http.get<ActionModeration[]>(`${this.apiUrl}/profils/${profilId}/historique-actions`);
+    const actions: ActionModeration[] = [
+      {
+        id: 1,
+        profilId,
+        type: 'VALIDATION',
+        description: 'Validation manuelle du compte',
+        raison: 'Documents conformes',
+        dateAction: '2026-03-15T10:00:00Z',
+        statut: 'EFFECTUEE'
+      }
+    ];
+    return of(actions).pipe(delay(300));
   }
 
-  /**
-   * Récupère les actions de modération en attente
-   */
   obtenirActionsEnAttente(): Observable<ActionModeration[]> {
-    return this.http.get<ActionModeration[]>(`${this.apiUrl}/actions/en-attente`);
+    return of([]).pipe(delay(300));
   }
 
-  /**
-   * Approuve une action de modération
-   */
   approuverAction(actionId: number): Observable<ActionModeration> {
-    return this.http.post<ActionModeration>(`${this.apiUrl}/actions/${actionId}/approuver`, {});
+    return of({} as ActionModeration).pipe(delay(300));
   }
 
-  /**
-   * Rejette une action de modération
-   */
   rejeterAction(actionId: number, raison: string): Observable<ActionModeration> {
-    return this.http.post<ActionModeration>(`${this.apiUrl}/actions/${actionId}/rejeter`, { raison });
+    return of({} as ActionModeration).pipe(delay(300));
   }
 
   // ========== UTILITAIRES ==========
 
-  /**
-   * Calcule le niveau de risque d'un profil
-   */
   calculerNiveauRisque(profil: ProfilAdmin): 'Faible' | 'Modéré' | 'Élevé' {
     if (profil.scoreConfiance >= 85 && profil.nbSignalements === 0) return 'Faible';
     if (profil.scoreConfiance >= 60 && profil.nbSignalements <= 2) return 'Modéré';
     return 'Élevé';
   }
 
-  /**
-   * Extrait les initiales d'un nom
-   */
   extraireInitiales(nom: string): string {
     return nom
       .split(' ')
@@ -333,9 +347,6 @@ export class AdminService {
       .join('');
   }
 
-  /**
-   * Formate une date
-   */
   formaterDate(date: string | Date): string {
     const d = new Date(date);
     return d.toLocaleDateString('fr-FR', {
