@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProfilAdmin, AdminService } from '../../services/admin.service';
@@ -210,6 +210,7 @@ import { ProfilAdmin, AdminService } from '../../services/admin.service';
 export class AdminEditProfilComponent {
   @Input() profil: ProfilAdmin | null = null;
   @Input() afficherModal = false;
+  @Output() fermer = new EventEmitter<void>();
 
   chargement = false;
 
@@ -232,6 +233,6 @@ export class AdminEditProfilComponent {
   }
 
   fermerModal(): void {
-    this.afficherModal = false;
+    this.fermer.emit();
   }
 }
