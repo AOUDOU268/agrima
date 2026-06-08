@@ -1,24 +1,24 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 export interface ProfilAdmin {
   id: number;
   nom: string;
   email: string;
   telephone: string;
-  role: 'ROLE_CONSOMMATEUR' | 'ROLE_PRODUCTEUR' | 'ROLE_LIVREUR';
-  statut: 'Actif' | 'En attente' | 'Suspendu';
+  role: string;
+  statut: string;
   localisation: string;
   dateInscription: string;
   derniereActivite: string;
   scoreConfiance: number;
   nbSignalements: number;
   note: number;
-  portefeuille: string;
+  portefeuille?: string;
   tags: string[];
-  // Champs additionnels
   siret?: string;
   nomExploitation?: string;
   certifications?: string[];
@@ -52,11 +52,20 @@ export interface RapportModeration {
   actionsEffectuees: number;
 }
 
+export interface Page<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class AdminService {
-  private apiUrl = '/api/admin';
+  private readonly baseUrl = `${environment.apiUrl}/api/users/admin`;
+
   private profilsSubject = new BehaviorSubject<ProfilAdmin[]>([]);
   public profils$ = this.profilsSubject.asObservable();
 
@@ -66,266 +75,150 @@ export class AdminService {
   private actionsSubject = new BehaviorSubject<ActionModeration[]>([]);
   public actions$ = this.actionsSubject.asObservable();
 
-  constructor(private http: HttpClient) {
-    this.chargerProfils();
-  }
+  constructor(private http: HttpClient) {}
 
   // ========== GESTION DES PROFILS ==========
 
-  /**
-   * Charge tous les profils depuis l'API
-   */
   chargerProfils(): void {
-    this.http.get<ProfilAdmin[]>(`${this.apiUrl}/profils`).subscribe({
-      next: (profils) => this.profilsSubject.next(profils),
-      error: (error) => console.error('Erreur lors du chargement des profils', error)
-    });
+    this.obtenirProfilsFiltres().subscribe();
   }
 
-  /**
-   * Récupère un profil spécifique
-   */
   obtenirProfil(id: number): Observable<ProfilAdmin> {
-    return this.http.get<ProfilAdmin>(`${this.apiUrl}/profils/${id}`);
+    return this.http.get<ProfilAdmin>(`${this.baseUrl}/profils/${id}`);
   }
 
-  /**
-   * Récupère les profils avec filtrage
-   */
   obtenirProfilsFiltres(role?: string, statut?: string): Observable<ProfilAdmin[]> {
-    let url = `${this.apiUrl}/profils`;
-    const params = new URLSearchParams();
-    if (role) params.append('role', role);
-    if (statut) params.append('statut', statut);
-    if (params.toString()) {
-      url += `?${params.toString()}`;
+    let params = new HttpParams();
+    if (role && role !== 'TOUS') {
+      params = params.set('role', role);
     }
-    return this.http.get<ProfilAdmin[]>(url);
+    if (statut && statut !== 'TOUS') {
+      params = params.set('statut', statut);
+    }
+
+    return this.http.get<Page<ProfilAdmin>>(`${this.baseUrl}/profils`, { params }).pipe(
+      map(page => page.content),
+      tap(profils => this.profilsSubject.next(profils))
+    );
   }
 
-  /**
-   * Récupère les profils urgents (signalements ou statut particulier)
-   */
   obtenirProfilsUrgents(): Observable<ProfilAdmin[]> {
-    return this.http.get<ProfilAdmin[]>(`${this.apiUrl}/profils/urgents`);
+    return this.http.get<ProfilAdmin[]>(`${this.baseUrl}/profils/urgents`);
   }
 
-  /**
-   * Sélectionne un profil pour affichage
-   */
   selectionnerProfil(profil: ProfilAdmin): void {
     this.profilSelectionneSubject.next(profil);
   }
 
-  /**
-   * Récupère les détails d'un consommateur
-   */
   obtenirConsommateur(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/consommateurs/${id}`);
+    return this.http.get<any>(`${environment.apiUrl}/api/users/${id}/consommateur`);
   }
 
-  /**
-   * Récupère les détails d'un producteur
-   */
   obtenirProducteur(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/producteurs/${id}`);
+    return this.http.get<any>(`${environment.apiUrl}/api/users/${id}/producteur`);
   }
 
-  /**
-   * Récupère les détails d'un livreur
-   */
   obtenirLivreur(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/livreurs/${id}`);
+    return this.http.get<any>(`${environment.apiUrl}/api/users/${id}/livreur`);
   }
 
-  /**
-   * Met à jour un profil
-   */
   mettreAJourProfil(id: number, donnees: Partial<ProfilAdmin>): Observable<ProfilAdmin> {
-    return this.http.put<ProfilAdmin>(`${this.apiUrl}/profils/${id}`, donnees).pipe(
-      map((profil) => {
-        this.chargerProfils();
-        return profil;
-      })
+    return this.http.put<ProfilAdmin>(`${this.baseUrl}/profils/${id}`, donnees).pipe(
+      tap(() => this.chargerProfils())
     );
   }
 
-  /**
-   * Supprime un profil
-   */
   supprimerProfil(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/profils/${id}`).pipe(
-      map(() => {
-        this.chargerProfils();
-      })
+    return this.http.delete<void>(`${this.baseUrl}/profils/${id}`).pipe(
+      tap(() => this.chargerProfils())
     );
   }
 
   // ========== ACTIONS DE MODERATION ==========
 
-  /**
-   * Valide un profil
-   */
   validerProfil(id: number, raison: string): Observable<ProfilAdmin> {
-    return this.http.post<ProfilAdmin>(`${this.apiUrl}/profils/${id}/valider`, { raison }).pipe(
-      map((profil) => {
-        this.chargerProfils();
-        return profil;
-      })
+    return this.http.post<ProfilAdmin>(`${this.baseUrl}/profils/${id}/valider`, { raison }).pipe(
+      tap(() => this.chargerProfils())
     );
   }
 
-  /**
-   * Suspend temporairement un profil
-   */
   suspendreTemporairement(id: number, duree: number, raison: string): Observable<ProfilAdmin> {
-    return this.http.post<ProfilAdmin>(`${this.apiUrl}/profils/${id}/suspendre-temp`, {
-      duree,
-      raison
-    }).pipe(
-      map((profil) => {
-        this.chargerProfils();
-        return profil;
-      })
+    return this.http.post<ProfilAdmin>(`${this.baseUrl}/profils/${id}/suspendre-temp`, { duree, raison }).pipe(
+      tap(() => this.chargerProfils())
     );
   }
 
-  /**
-   * Réactive un profil
-   */
   reactiverProfil(id: number): Observable<ProfilAdmin> {
-    return this.http.post<ProfilAdmin>(`${this.apiUrl}/profils/${id}/reactiver`, {}).pipe(
-      map((profil) => {
-        this.chargerProfils();
-        return profil;
-      })
+    return this.http.post<ProfilAdmin>(`${this.baseUrl}/profils/${id}/reactiver`, {}).pipe(
+      tap(() => this.chargerProfils())
     );
   }
 
-  /**
-   * Ajoute un avertissement
-   */
   ajouterAvertissement(id: number, raison: string, details: string): Observable<ActionModeration> {
-    return this.http.post<ActionModeration>(`${this.apiUrl}/profils/${id}/avertir`, {
-      raison,
-      details
-    });
+    return this.http.post<ActionModeration>(`${this.baseUrl}/profils/${id}/avertir`, { raison, details });
   }
 
-  /**
-   * Bloque définitivement un profil
-   */
   bloquerProfil(id: number, raison: string): Observable<ProfilAdmin> {
-    return this.http.post<ProfilAdmin>(`${this.apiUrl}/profils/${id}/bloquer`, { raison }).pipe(
-      map((profil) => {
-        this.chargerProfils();
-        return profil;
-      })
+    return this.http.post<ProfilAdmin>(`${this.baseUrl}/profils/${id}/bloquer`, { raison }).pipe(
+      tap(() => this.chargerProfils())
     );
   }
 
-  /**
-   * Envoie un message au profil
-   */
   envoyerMessage(id: number, sujet: string, contenu: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/profils/${id}/message`, {
-      sujet,
-      contenu
-    });
+    return this.http.post<any>(`${this.baseUrl}/profils/${id}/message`, { sujet, contenu });
   }
 
   // ========== GESTION DES ROLES ==========
 
-  /**
-   * Assigne un rôle à un utilisateur
-   */
   assignerRole(userId: number, nouveauRole: string): Observable<ProfilAdmin> {
-    return this.http.post<ProfilAdmin>(`${this.apiUrl}/utilisateurs/${userId}/role`, {
-      role: nouveauRole
-    }).pipe(
-      map((profil) => {
-        this.chargerProfils();
-        return profil;
-      })
+    return this.http.post<ProfilAdmin>(`${this.baseUrl}/utilisateurs/${userId}/role`, { role: nouveauRole }).pipe(
+      tap(() => this.chargerProfils())
     );
   }
 
-  /**
-   * Retire un rôle à un utilisateur
-   */
   retirerRole(userId: number, role: string): Observable<ProfilAdmin> {
-    return this.http.delete<ProfilAdmin>(`${this.apiUrl}/utilisateurs/${userId}/role/${role}`).pipe(
-      map((profil) => {
-        this.chargerProfils();
-        return profil;
-      })
+    return this.http.delete<ProfilAdmin>(`${this.baseUrl}/utilisateurs/${userId}/role/${role}`).pipe(
+      tap(() => this.chargerProfils())
     );
   }
 
   // ========== ANALYTICS ET RAPPORTS ==========
 
-  /**
-   * Génère un rapport de modération
-   */
   genererRapportModeration(dateDebut: string, dateFin: string): Observable<RapportModeration> {
-    return this.http.get<RapportModeration>(`${this.apiUrl}/rapports/moderation`, {
-      params: {
-        dateDebut,
-        dateFin
-      }
-    });
+    let params = new HttpParams().set('dateDebut', dateDebut).set('dateFin', dateFin);
+    return this.http.get<RapportModeration>(`${this.baseUrl}/rapports/moderation`, { params });
   }
 
-  /**
-   * Récupère les statistiques globales
-   */
   obtenirStatistiques(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/statistiques`);
+    return this.http.get<any>(`${this.baseUrl}/statistiques`);
   }
 
-  /**
-   * Récupère l'historique des actions d'un profil
-   */
   obtenirHistoriqueActions(profilId: number): Observable<ActionModeration[]> {
-    return this.http.get<ActionModeration[]>(`${this.apiUrl}/profils/${profilId}/historique-actions`);
+    return this.http.get<ActionModeration[]>(`${this.baseUrl}/profils/${profilId}/historique-actions`);
   }
 
-  /**
-   * Récupère les actions de modération en attente
-   */
   obtenirActionsEnAttente(): Observable<ActionModeration[]> {
-    return this.http.get<ActionModeration[]>(`${this.apiUrl}/actions/en-attente`);
+    return this.http.get<ActionModeration[]>(`${this.baseUrl}/actions/en-attente`);
   }
 
-  /**
-   * Approuve une action de modération
-   */
   approuverAction(actionId: number): Observable<ActionModeration> {
-    return this.http.post<ActionModeration>(`${this.apiUrl}/actions/${actionId}/approuver`, {});
+    return this.http.post<ActionModeration>(`${this.baseUrl}/actions/${actionId}/approuver`, {});
   }
 
-  /**
-   * Rejette une action de modération
-   */
   rejeterAction(actionId: number, raison: string): Observable<ActionModeration> {
-    return this.http.post<ActionModeration>(`${this.apiUrl}/actions/${actionId}/rejeter`, { raison });
+    return this.http.post<ActionModeration>(`${this.baseUrl}/actions/${actionId}/rejeter`, { raison });
   }
 
   // ========== UTILITAIRES ==========
 
-  /**
-   * Calcule le niveau de risque d'un profil
-   */
   calculerNiveauRisque(profil: ProfilAdmin): 'Faible' | 'Modéré' | 'Élevé' {
     if (profil.scoreConfiance >= 85 && profil.nbSignalements === 0) return 'Faible';
     if (profil.scoreConfiance >= 60 && profil.nbSignalements <= 2) return 'Modéré';
     return 'Élevé';
   }
 
-  /**
-   * Extrait les initiales d'un nom
-   */
   extraireInitiales(nom: string): string {
+    if (!nom) return '';
     return nom
       .split(' ')
       .slice(0, 2)
@@ -333,10 +226,8 @@ export class AdminService {
       .join('');
   }
 
-  /**
-   * Formate une date
-   */
   formaterDate(date: string | Date): string {
+    if (!date) return '-';
     const d = new Date(date);
     return d.toLocaleDateString('fr-FR', {
       year: 'numeric',
