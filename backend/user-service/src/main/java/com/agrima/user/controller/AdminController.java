@@ -17,7 +17,7 @@ import java.util.List;
  * Accessible uniquement aux administrateurs
  */
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/users/admin")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
