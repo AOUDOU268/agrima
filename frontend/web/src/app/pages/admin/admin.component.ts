@@ -476,6 +476,7 @@ export class AdminComponent implements OnInit {
         }
       }
     });
+    this.adminService.chargerProfils();
   }
 
   get profilsFiltres(): ProfilAdmin[] {
